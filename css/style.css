@@ -1,0 +1,35 @@
+/* Global Style Configuration */
+
+/* Body Style */
+body{
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+/* Navigation Bar */
+body header div.navBar{
+    /* Display */
+    display: flex;
+    gap: 10px;
+
+    /*border: 1px solid black;*/
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Tabs inside the navigation bar */
+body header div.navBar .tab{
+    border-radius: 5px;
+    padding: 10px;
+}
+
+body header div.navBar .tab:hover{
+    background-color: rgb(235, 227, 213);
+    border-bottom: 3px solid rgb(184, 156, 108);
+}
+
+/* Active Tabs */
+.tab.active {
+    color: cornflowerblue;
+    border-bottom: 3px solid cornflowerblue;
+}
