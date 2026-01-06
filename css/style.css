@@ -4,32 +4,90 @@
 body{
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
+
+    margin: 0px;
 }
 
-/* Navigation Bar */
+header{
+    width: 100%;
+    position: fixed; /* This makes the header apper on top of image instead of taking its own space */
+    top: 0;
+    z-index: 9999; /* To apper at the top most layer anyway */
+}
+
+/* Header: Navigation Bar */
 body header div.navBar{
     /* Display */
     display: flex;
+    justify-content: end;
     gap: 10px;
 
-    /*border: 1px solid black;*/
+    /* Design : Glasssmorphism */
     border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    background: rgba(184, 156, 108, 0.35);
+    backdrop-filter: blur(10px);
+    /*box-shadow: 0 2px 4px rgba(0,0,0,0.2);*/
+    
+    /* Position */
+    margin-bottom: 10px;
 }
 
-/* Tabs inside the navigation bar */
 body header div.navBar .tab{
+    /* Tabs inside the navigation bar */
     border-radius: 5px;
     padding: 10px;
+
+    font-size: 20px;
 }
 
 body header div.navBar .tab:hover{
+    /* Hovered Tabs */
     background-color: rgb(235, 227, 213);
     border-bottom: 3px solid rgb(184, 156, 108);
 }
 
-/* Active Tabs */
 .tab.active {
-    color: cornflowerblue;
-    border-bottom: 3px solid cornflowerblue;
+    /* Active Tabs */
+    color: rgb(255, 255, 255);
+    border-bottom: 4px solid rgb(255, 255, 255);
+}
+
+/* Main: Banner */
+.main .banner{
+    height: 400px;
+    overflow: hidden;
+    position: relative;
+}
+
+.main .banner img {
+    width: 100%;
+    height: 100%;
+
+    /* Crop the Image */
+    object-fit: cover;
+    object-position: center;
+}
+
+.main .banner h1{
+
+    /*
+    * Position : to put the header 10px relatively from the .banner
+    * to make the text appear on top of the image.
+    */
+    position: absolute;
+    bottom: 10px;
+
+    font-size: 50px;
+    color:white;
+    padding: 10px;
+    padding-bottom: 30px;
+}
+
+
+/* Footer */
+footer{
+    margin-top: auto;    /* This makes the footer to display at the buttom*/
+    padding: 10px;
+
+    background-color: rgba(184, 156, 108, 0.799);
 }

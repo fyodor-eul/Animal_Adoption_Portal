@@ -16,8 +16,8 @@ function openTab(name){
     /* Highlight the current tab */
     if(name === "home"){
         document.getElementById("homeTab").classList.add('active');
-    }else if(name == "gallery"){
-        document.getElementById("galleryTab").classList.add('active');
+    }else if(name == "adopt"){
+        document.getElementById("adoptTab").classList.add('active');
     }else if(name == "about"){
         document.getElementById("aboutTab").classList.add('active');
     }else{
