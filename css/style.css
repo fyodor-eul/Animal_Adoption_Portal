@@ -3,15 +3,17 @@
 /* Body Style */
 body{
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color: #ffffff;
 
     margin: 0px;
 }
 
 header{
-    width: 100%;
+    width: 90%;
+
     position: fixed; /* This makes the header apper on top of image instead of taking its own space */
-    top: 0;
+    top: 5px;
+    left: 5%;
     z-index: 9999; /* To apper at the top most layer anyway */
 }
 
@@ -42,8 +44,9 @@ body header div.navBar .tab{
 
 body header div.navBar .tab:hover{
     /* Hovered Tabs */
-    background-color: rgb(235, 227, 213);
-    border-bottom: 3px solid rgb(184, 156, 108);
+    /*background-color: rgb(235, 227, 213);*/
+    color: white;
+    border-bottom: 4px solid rgb(184, 156, 108);
 }
 
 .tab.active {
@@ -79,8 +82,63 @@ body header div.navBar .tab:hover{
 
     font-size: 50px;
     color:white;
+    padding: 60px;
+    padding-bottom: 80px;
+}
+
+/* Posts */
+.post{
+    display: flex;
+    justify-content: space-around;
+
+    gap: 100px;
+    padding: 20px 100px;
+}
+
+.post img {
+    border-radius: 10px;
+}
+
+.subTitle {
+    font-size: 30px;
+    color:rgb(133, 93, 32);
+}
+
+.post p {
+    font-size: 20px;
+    color:rgba(75, 75, 75, 0.635);
+    text-align: justify;
+}
+
+/* Adoption Instruction */
+
+.adoptionInstruction{
+    padding: 20px 100px;
+}
+
+.adoptionInstruction .instructions{
+
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+}
+
+.stepCard {
+
+    /* Display */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    /* Box */
     padding: 10px;
-    padding-bottom: 30px;
+    margin: 10px;
+
+    /* Design */
+    width: 600px;
+    height: 50px;
+    background-color: blanchedalmond;
+    border-radius: 10px;
 }
 
 
