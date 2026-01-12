@@ -7,7 +7,7 @@ var connection = mysql.createConnection({
     port: '3306', //port of the database server
     user: 'root', //user of the database server
     password: 'adev', //password of the database server
-    database: 'animaladoptoin' //database name
+    database: 'animaladoption' //database name
 });
 
 //Test connection. If there is an error, console.log the error
