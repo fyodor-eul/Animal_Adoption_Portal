@@ -1,0 +1,29 @@
+
+
+h1{
+    /* Box */
+    margin-top: 60px;
+}
+
+.gallery {
+    /* Display */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 5px;
+
+    list-style-type: none; /* to remove the dots */
+}
+
+.petCard {
+    /* Size */
+    width: 400px;
+    height: 500px;
+
+    /* Box */
+    margin: 10px 0px;
+
+    /* Style */
+    background-color: rgb(201, 201, 201);
+    border-radius: 10px;
+}

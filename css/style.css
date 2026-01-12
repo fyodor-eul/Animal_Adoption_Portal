@@ -80,7 +80,8 @@ body header div.navBar .tab:hover{
     position: absolute;
     bottom: 10px;
 
-    font-size: 50px;
+    font-size: 60px;
+    font-style: Helvetica;
     color:white;
     padding: 60px;
     padding-bottom: 80px;
@@ -147,5 +148,18 @@ footer{
     margin-top: auto;    /* This makes the footer to display at the buttom*/
     padding: 10px;
 
+    /* Display */
+    display: flex;
+    align-items: center;
+
     background-color: rgba(184, 156, 108, 0.799);
 }
+
+footer div {
+    padding: 10px;
+}
+
+footer div h2, ul {
+    margin: 0px;
+}
+
