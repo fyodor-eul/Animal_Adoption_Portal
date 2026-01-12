@@ -1,0 +1,15 @@
+{
+  "name": "animal_adoption_portal",
+  "version": "1.0.0",
+  "description": "a basic CRUD project for the admin panel of an animal adoption website",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Thiha Htoo Zin (Fyodor)",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
