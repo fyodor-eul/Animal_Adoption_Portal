@@ -1,5 +1,7 @@
-var express = require("express")
-var app = express()
+var express = require("express");
+var db = require("./db-connections");
+
+var app = express();
 
 app.use(express.json());
 app.use(express.static("./public"));
