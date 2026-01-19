@@ -5,7 +5,7 @@
         <link rel="stylesheet" type="text/css" href="./css/gallery.css">
         <script src="js/script.js"></script>
     </head>
-    <body>
+    <body onload="fetchAnimalData()">
 
         <header>
             <!-- Navigation Bar -->
@@ -19,29 +19,21 @@
         </header>
 
         <h1>Gallery</h1>
-        <ul class="gallery">
-            <li class="petCard">
-                <!--Image-->
-                <!--Name-->
-                <!--Age-->
-                <!--Gender-->
-                <!--Breed-->
-                <!--Personality Description-->
-            </li>
-            <li class="petCard"></li>
-            <li class="petCard"></li>
-
-            <li class="petCard"></li>
-            <li class="petCard"></li>
-            <li class="petCard"></li>
-
-            <li class="petCard"></li>
-            <li class="petCard"></li>
-            <li class="petCard"></li>
-
-            <li class="petCard"></li>
-            <li class="petCard"></li>
-            <li class="petCard"></li>
-        </ul>
+        <div id="galleryCarousel" class="gallery">
+            <!--
+            <ul>
+                <li class="petCard">
+                    <img src="images\profiles\1.jpg" width="150">
+                    <dl class="petDetails">
+                        <dt>Name</dt><dd>Doggo</dd>
+                        <dt>Age</dt><dd>18</dd>
+                        <dt>Gender</dt><dd>Male</dd>
+                        <dt>Breed</dt><dd>Golden Retriever</dd>
+                        <Description>Good</Description>
+                    </dl>
+                </li>
+            </ul>
+        -->
+        </div>
     </body>
 </html>

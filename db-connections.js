@@ -1,13 +1,16 @@
+//import env data
+require("dotenv").config();
+
 //import the mysql2 library
 var mysql = require('mysql2');
 
 //create the connection to the database
 var connection = mysql.createConnection({
-    host: 'localhost', //IP of the database server
-    port: '3306', //port of the database server
-    user: 'root', //user of the database server
-    password: 'adev', //password of the database server
-    database: 'animaladoption' //database name
+    host: process.env.DB_HOST, //IP of the database server
+    port: process.env.DB_PORT, //port of the database server
+    user: process.env.DB_USER, //user of the database server
+    password: process.env.DB_PASSWORD, //password of the database server
+    database: process.env.DB_NAME //database name
 });
 
 //Test connection. If there is an error, console.log the error

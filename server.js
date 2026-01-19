@@ -6,8 +6,15 @@ var app = express();
 app.use(express.json());
 app.use(express.static("./public"));
 
-app.route('/index.html').get(function(req,res){
-    //
+app.route('/gallery').get(function(req,res){
+    var sql = "SELECT * FROM animaladoption.animals";
+    db.query(sql, function(error, result){
+        if(error){
+            throw error;
+        }else{
+            res.json(result);
+        }
+    })
 });
 
 
