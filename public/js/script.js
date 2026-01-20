@@ -32,8 +32,12 @@ function openTab(name){
 /* Add to Gallery Pop-up Box */
 var dialog = document.getElementById("addCardDialog");
 
-function showAddCardForm(){
+function showAddCardDialog(){
     dialog.showModal();
+}
+
+function removeAddCardDialog(){
+    dialog.close();
 }
 
 /* Retrieve the data */
@@ -134,9 +138,9 @@ function addAnimalData(){
 */
 
 function addAnimalData(){
-    console.log("addAnimalData running");
     var formElement = document.getElementById('addCardForm');
     var formData = new FormData(formElement);
+    console.log(formData);
 
     fetch('/gallery', {
         method: 'POST',
@@ -149,7 +153,7 @@ function addAnimalData(){
         return response.json();
     })
     .then(data => {
-        location.href = "gallery.html";
+        //location.href = "gallery.html";
     })
     .catch(error => {
         console.error("Error : ", error);

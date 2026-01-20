@@ -41,8 +41,8 @@ app.post('/gallery', upload.single("profileImg"), function(req, res){
         req.body.dateOfBirth,
         req.body.species,
         req.body.breed,
-        req.body.adoptionStatus,
         req.body.gender,
+        req.body.adoptionStatus,
         req.body.temperament
     ];
 

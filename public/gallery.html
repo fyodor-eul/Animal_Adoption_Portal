@@ -17,77 +17,100 @@
             <!-- Search bar and Filter -->
         </header>
 
-        <button onclick=showAddCardForm()>Add Card</button>
-        <dialog id="addCardDialog">
-            <h2>Add Card</h2>
-            <form id="addCardForm" method="post" enctype="multipart/form-data" onsubmit="event.preventDefault(); addAnimalData();">
-                <h2>Add New Pet</h2>
+        <h1>Gallery</h1>
+        <div class="actionBar">
+            <button onclick=showAddCardDialog()>Add Pet</button>
+        </div>
 
+        <dialog id="addCardDialog" class="addCardDialog">
+            <div class="windowBar">
+                <button class="cancelButton" onclick=removeAddCardDialog()>❌</button>
+            </div>
+            <div class="banner">
+                <h2>Add New Pet</h2>
+            </div>
+            <br>
+            <form id="addCardForm" method="post" enctype="multipart/form-data" onsubmit="event.preventDefault(); addAnimalData();">
                 <!-- Profile Image -->
-                <label for="profileImg">Profile Image:</label>
+                <label for="profileImg" class="imageUpload">Upload Profile Image</label>
                 <input type="file" id="profileImg" name="profileImg" accept="image/*" required>
+                <br>
 
                 <!-- Name -->
-                <label for="name">Pet Name:</label>
-                <input type="text" id="name" name="name" required>
+                <!-- <label for="name">Pet Name:</label> -->
+                <input type="text" id="name" name="name" class="profileNameInput" placeholder="Pet's Name" required>
+                <br>
 
                 <!-- Date of Birth -->
-                <label for="dob">Date of Birth:</label>
-                <input type="date" id="dob" name="dateOfBirth" required>
+                <div>
+                    <label for="dob" class="textLabels">Date of Birth:</label>
+                    <input type="date" id="dob" class="dateOfBirth" name="dateOfBirth" required>
+                </div>
+                <br>
 
                 <!-- Species Dropdown -->
-                <label for="species">Species:</label>
-                <select id="species" name="species" required>
-                    <option value="">Select Species</option>
-                    <option value="1">Dog</option>
-                    <option value="2">Cat</option>
-                    <option value="3">Rabbit</option>
-                    <option value="4">Bird</option>
-                    <option value="5">Hamster</option>
-                </select>
+                <div>
+                    <label for="species" class="textLabels">Species:</label>
+                    <select id="species" name="species" required>
+                        <option value="">Select Species</option>
+                        <option value="1">🐶 Dog</option>
+                        <option value="2">🐱 Cat</option>
+                        <option value="3">🐰 Rabbit</option>
+                        <option value="4">🐦 Bird</option>
+                        <option value="5">🐹 Hamster</option>
+                    </select>
+                </div>
+                <br>
 
                 <!-- Breed Dropdown -->
-                <label for="breed">Breed:</label>
-                <select id="breed" name="breed" required>
-                    <option value="">Select Breed</option>
-                    <option value="1">Golden Retriever</option>
-                    <option value="2">German Shepherd</option>
-                    <option value="3">British Shorthair</option>
-                </select>
+                <div>
+                    <label for="breed" class="textLabels">Breed:</label>
+                    <select id="breed" name="breed" required>
+                        <option value="">Select Breed</option>
+                        <option value="1">Golden Retriever</option>
+                        <option value="2">German Shepherd</option>
+                        <option value="3">British Shorthair</option>
+                    </select>
+                </div>
+                <br>
                 
                 <!-- Gender -->
-                <label>Gender:</label>
-                <div class="genderGroup">
-                    <label>
-                        <input type="radio" name="gender" value="male" required> Male
-                    </label>
-                    <label>
-                        <input type="radio" name="gender" value="female" required> Female
-                    </label>
+                <div>
+                    <label class="textLabels">Gender:</label>
+                    <div class="genderGroup">
+                        <label>
+                            <input type="radio" name="gender" value="male" required> Male
+                        </label>
+                        <label>
+                            <input type="radio" name="gender" value="female" required> Female
+                        </label>
+                    </div>
                 </div>
+                <br>
 
                 <!-- Adoption Status -->
-                <label for="adoptionStatus">Adoption Status:</label>
-                <select id="adoptionStatus" name="adoptionStatus" required>
-                    <option value="">Select Status</option>
-                    <option value="1">Available</option>
-                    <option value="2">Reserved</option>
-                    <option value="3">Adopted</option>
-                    <option value="4">Under Medical Care</option>
-                    <option value="5">Fostered</option>
-                </select>
-
+                <div>
+                    <label for="adoptionStatus" class="textLabels">Adoption Status:</label>
+                    <select id="adoptionStatus" name="adoptionStatus" required>
+                        <option value="">Select Status</option>
+                        <option value="1">Available</option>
+                        <option value="2">Reserved</option>
+                        <option value="3">Adopted</option>
+                        <option value="4">Under Medical Care</option>
+                        <option value="5">Fostered</option>
+                    </select>
+                </div>
+                <br>
 
                 <!-- Description -->
                 <label for="description">Description:</label>
                 <textarea id="description" name="temperament" rows="4" placeholder="Enter personality or notes..." required></textarea>
 
-                <!-- Submit -->
+                <!-- Submit --> 
                 <button type="submit">Add Pet</button>
             </form>
         </dialog>
 
-        <h1>Gallery</h1>
         <div id="galleryCarousel" class="gallery">
             <!--
             <ul>
