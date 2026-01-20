@@ -27,6 +27,15 @@ function openTab(name){
 
 
 /* Gallery */
+
+
+/* Add to Gallery Pop-up Box */
+var dialog = document.getElementById("addCardDialog");
+
+function showAddCardForm(){
+    dialog.showModal();
+}
+
 /* Retrieve the data */
 function fetchAnimalData(){
     console.log("fetchAnimalData")
@@ -92,4 +101,57 @@ function insertDynamicCards(arrayOfAnimals){
     newContent += "</ul>";
 
     dynamicAnimalList.innerHTML = newContent;
+}
+
+/* Create a New Card */
+/*
+function addAnimalData(){
+    var formElement = document.getElementById('addCardForm');
+    var formData = new FormData(formElement);
+    var animalData = Object.fromEntries(formData.entries());
+    var jsonString = JSON.stringify(animalData);
+
+    fetch('/gallery', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: jsonString,
+    })
+    .then(response => {
+        if(!response.ok){
+            throw new Error('Error: The response was not ok');
+        }
+        response.text()
+    })
+    .then(data => {
+        location.href = "gallery.html";
+    })
+    .catch(error => {
+        console.error("Error : ", error);
+    });
+}
+*/
+
+function addAnimalData(){
+    console.log("addAnimalData running");
+    var formElement = document.getElementById('addCardForm');
+    var formData = new FormData(formElement);
+
+    fetch('/gallery', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if(!response.ok){
+            throw new Error('Error: The response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        location.href = "gallery.html";
+    })
+    .catch(error => {
+        console.error("Error : ", error);
+    });
 }
