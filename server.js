@@ -104,22 +104,57 @@ app.post('/login', (req, res) => {
     });
 });
 
-//app.route('/gallery').post(function(req, res){
+/* Register */
+app.post('/register', function(req, res) {
+    const username = req.body.username;
+    const password = req.body.password;
+    const type = req.body.type; // number (1 = admin, 2 = user)
+
+    if (!username || !password || !type) {
+        return res.status(400).send("Missing required fields");
+    }
+
+    // 1. Check duplicate username
+    var checkSql = "SELECT * FROM users WHERE name = ?";
+    db.query(checkSql, [username], function(err, rows) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Database error");
+        }
+
+        if (rows.length > 0) {
+            return res.status(409).send("Username already exists");
+        }
+
+        // 2. Insert user
+        var insertSql = "INSERT INTO users (name, password, type, createdAt) VALUES (?, ?, ?, NOW())";
+        db.query(insertSql, [username, password, type], function(err2, result) {
+            if (err2) {
+                console.error(err2);
+                return res.status(500).send("Failed to create account");
+            }
+
+            res.send("Registration successful");
+        });
+    });
+});
+
+
 app.post('/gallery', upload.single("profileImg"), function(req, res){
 
     const imgUrl = `images/profiles/${req.file.filename}`;
 
-    const sql = "INSERT INTO animaladoption.animals (name, profileImg, dateOfBirth, species_id, breed_id, adoptionStatus_id, gender, temperament) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    const sql = "INSERT INTO animaladoption.animals (name, profileImg, dateOfBirth, breed_id, gender, temperament, adoptionStatus_id, addedBy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     var parameter = [
         req.body.name,
         imgUrl,
         req.body.dateOfBirth,
-        req.body.species,
         req.body.breed,
         req.body.gender,
+        req.body.temperament,
         req.body.adoptionStatus,
-        req.body.temperament
+        req.body.addedBy
     ];
 
     db.query(sql, parameter, function(error, result){
@@ -137,7 +172,27 @@ app.post('/gallery', upload.single("profileImg"), function(req, res){
 });
 
 app.route('/gallery').get(function(req, res){
-    var sql = "SELECT * FROM animaladoption.animals";
+    /* Selecting from animals table joining with breeds, species and adoptionStatus to map the IDs with name. (excluding IDs themselves to be shown)*/
+    var sql = `
+        SELECT 
+            a.id,
+            a.name,
+            a.profileImg,
+            a.dateOfBirth,
+            a.gender,
+            a.temperament,
+            a.addedBy,
+    
+            b.name AS breedName,
+            s.name AS speciesName,
+            st.name AS adoptionStatusName
+        FROM animaladoption.animals a
+        JOIN animaladoption.breeds b ON a.breed_id = b.id
+        JOIN animaladoption.species s ON b.species_id = s.id
+        JOIN animaladoption.adoptionStatus st ON a.adoptionStatus_id = st.id
+    `;
+
+
     db.query(sql, function(error, result){
         if(error){
             throw error;
@@ -149,6 +204,7 @@ app.route('/gallery').get(function(req, res){
             //console.log("Session user:", JSON.stringify(req.session.user));
             console.log(`Username: ${req.session.user.username} Type: ${req.session.user.type} has browse ${req.path} Method : ${req.method}`);
             res.json(result);
+            //console.log(result);
         }
     })
 });

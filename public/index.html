@@ -3,7 +3,6 @@
     <head>
         <title>Home</title>
         <link rel="stylesheet" type="text/css" href="./css/style.css">
-        <script src="js/script.js"></script>
     </head>
     <body>
         <header>
@@ -11,8 +10,69 @@
             <div class="navBar">
                 <div id="homeTab" class="tab active" onclick="openTab('home')"> Home </div>
                 <div id="adoptTab" class="tab" onclick="openTab('adopt')"> Gallery </div>
-                <div id="aboutTab" class="tab" onclick="openTab('about')"> About </div>
+                <div id="aboutTab" class="tab" onclick="openTab('login')"> Login or Register </div>
             </div>
+            <!-- Dialog for Loggin In -->
+            <dialog id="loginDialog" class="authDialog">
+                <div class="windowBar">
+                    <button class="cancelButton" onclick="removeLoginDialog()">❌</button>
+                </div>
+
+                <div class="banner">
+                    <h2>Login to Your Account</h2>
+                </div>
+                <br>
+
+                <form id="loginForm" onsubmit="event.preventDefault(); loginUser();">
+                    <!-- Email -->
+                    <input type="text" id="loginUsername" name="username" class="authInput" placeholder="Username" required>
+                    <br>
+
+                    <!-- Password -->
+                    <input type="password" id="loginPassword" name="password" class="authInput" placeholder="Password" required>
+                    <br>
+
+                    <!-- Submit -->
+                    <button type="submit">Login</button>
+                </form>
+
+                <p style="text-align:center; margin-top:10px;">
+                    Don't have an account? 
+                    <a href="#" onclick="showRegisterDialog()">Create one</a>
+                </p>
+            </dialog>
+
+            <!-- Dialog for Registering New Users -->
+
+            <dialog id="registerDialog" class="authDialog">
+                <div class="windowBar">
+                    <button class="cancelButton" onclick="removeRegisterDialog()">❌</button>
+                </div>
+                <div class="banner">
+                    <h2>Create Account</h2>
+                </div>
+                <form id="registerForm" onsubmit="event.preventDefault(); registerUser();">
+                    <!-- users.name -->
+                    <input type="text" id="regUsername" name="username" placeholder="Username" class="authInput" required>
+
+                    <!-- users.type (FK to userTypes.id) -->
+                    <select id="regType" name="type" class="authInput" required>
+                        <option value="">Select account type</option>
+                        <option value="1">Admin</option>
+                        <option value="2">User</option>
+                    </select>
+                
+                    <!-- users.password -->
+                    <input type="password" id="regPassword" name="password" placeholder="Password" class="authInput" oninput="checkPasswords()" required>
+                
+                    <input type="password" id="regConfirmPassword" name="confirmPassword" placeholder="Confirm Password" class="authInput" oninput="checkPasswords()" required>
+                
+                    <button type="submit">Sign Up</button>
+                </form>
+
+                <p>Already have an account? <a onclick="showLoginDialog()">Login</a></p>
+            </dialog>
+
         </header>
         
         <div class="main">
@@ -81,5 +141,7 @@
                 <p>We are dedicated to rescuing, rehabilitating, and protecting injured and orphaned animals. Through care, compassion, and community support, we give animals a second chance to heal and return safely to the wild.</p>
             </div>
         </footer>
+
+        <script src="js/script.js"></script>
     </body>
 </html>
