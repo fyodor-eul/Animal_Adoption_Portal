@@ -226,7 +226,20 @@ app.route('/gallery').get(function(req, res){
             }
             //console.log("Session user:", JSON.stringify(req.session.user));
             console.log(`Username: ${req.session.user.username} Type: ${req.session.user.type} has browse ${req.path} Method : ${req.method}`);
-            res.json(result);
+            //res.json(result);
+
+            const userType = String(req.session.user.type || "").toLowerCase();
+
+            // If NOT admin → filter out adopted animals
+            let finalResult = result;
+            if (userType !== "admin") {
+                finalResult = result.filter(a => 
+                    String(a.adoptionStatusName).toLowerCase() !== "adopted"
+                );
+            }
+
+            res.json(finalResult);
+
             //console.log(result);
         }
     })
@@ -395,6 +408,44 @@ app.delete("/api/species/:id", requireAdmin, function(req, res) {
             }
             if (!result || result.affectedRows === 0) {
                 return res.status(404).send("Species not found");
+            }
+            res.send("Deleted");
+        }
+    );
+});
+
+/* Create status */
+app.post("/api/adoption-status", requireAdmin, function(req, res) {
+    const name = (req.body.name || "").trim();
+    if (!name) return res.status(400).send("Status name required");
+
+    db.query(
+        "INSERT INTO animaladoption.adoptionStatus (name) VALUES (?)",
+        [name],
+        function(err, result) {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("Database error");
+            }
+            res.json({ id: result.insertId, name: name });
+        }
+    );
+});
+
+/* Delete status */
+app.delete("/api/adoption-status/:id", requireAdmin, function(req, res) {
+    const id = req.params.id;
+
+    db.query(
+        "DELETE FROM animaladoption.adoptionStatus WHERE id = ?",
+        [id],
+        function(err, result) {
+            if (err) {
+                console.error(err);
+                return res.status(400).send("Cannot delete status (it may be in used)");
+            }
+            if (!result || result.affectedRows === 0) {
+                return res.status(404).send("Status not found");
             }
             res.send("Deleted");
         }

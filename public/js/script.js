@@ -156,7 +156,6 @@ function openTab(name){
 
 /* Gallery */
 
-
 /* Add to Gallery Pop-up Box */
 var addCardDialog = document.getElementById("addCardDialog");
 
@@ -464,6 +463,10 @@ function removeSpeciesDialog() {
 }
 
 function loadSpeciesList() {
+    /*
+    * This function fetches the list of available species and
+    * populate the <div> with the ID of speciesList 
+    */
     fetch("/api/species", { credentials: "same-origin" })
         .then(res => {
             if (!res.ok) return res.text().then(t => { throw new Error(t); });
@@ -471,10 +474,10 @@ function loadSpeciesList() {
         })
         .then(rows => {
             const container = document.getElementById("speciesList");
-            let html = "<ul style='list-style:none; padding-left:0;'>";
+            let html = "<ul>";
             rows.forEach(s => {
                 html += `
-                    <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0;">
+                    <li>
                         <span>${s.name}</span>
                         <button type="button" onclick="deleteSpecies(${s.id})">Remove</button>
                     </li>
@@ -508,7 +511,7 @@ function addSpecies() {
         input.value = "";
         loadSpeciesList();
 
-        // Optional: refresh dropdown in Add Pet dialog if it is open
+        // Refresh dropdown in Add Pet dialog if it is open
         loadAddPetDropdowns();
     })
     .catch(err => {
@@ -539,6 +542,96 @@ function deleteSpecies(id) {
     });
 }
 
+/* Manage Adoption Status Dialog */
+function showStatusDialog() {
+    closeAllDialogs();
+    document.getElementById("statusDialog").showModal();
+    loadStatusList();
+}
+
+function removeStatusDialog() {
+    document.getElementById("statusDialog").close();
+}
+
+function loadStatusList() {
+    /*
+    * This function fetches the list of available statues and
+    * populate the <div> with the ID of statusList
+    */
+    fetch("/api/adoption-status", { credentials: "same-origin" })
+        .then(res => {
+            if (!res.ok) return res.text().then(t => { throw new Error(t); });
+            return res.json();
+        })
+        .then(rows => {
+            const container = document.getElementById("statusList");
+            let html = "<ul>";
+            rows.forEach(s => {
+                html += `
+                    <li>
+                        <span>${s.name}</span>
+                        <button type="button" onclick="deleteStatus(${s.id})">Remove</button>
+                    </li>
+                `;
+            });
+            html += "</ul>";
+            container.innerHTML = html;
+        })
+        .catch(err => {
+            console.error(err);
+            alert(err.message || "Failed to load species");
+        });
+}
+
+function addStatus() {
+    const input = document.getElementById("newStatusName");
+    const name = input.value.trim();
+    if (!name) return;
+
+    fetch("/api/adoption-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ name: name })
+    })
+    .then(res => {
+        if (!res.ok) return res.text().then(t => { throw new Error(t); });
+        return res.json();
+    })
+    .then(() => {
+        input.value = "";
+        loadStatusList();
+
+        // Refresh dropdown in Add Pet dialog if it is open
+        loadAddPetDropdowns();
+    })
+    .catch(err => {
+        console.error(err);
+        alert(err.message || "Failed to add status");
+    });
+}
+
+function deleteStatus(id) {
+    const ok = confirm("Delete this status?");
+    if (!ok) return;
+
+    fetch("/api/adoption-status/" + id, {
+        method: "DELETE",
+        credentials: "same-origin"
+    })
+    .then(res => {
+        if (!res.ok) return res.text().then(t => { throw new Error(t); });
+        return res.text();
+    })
+    .then(() => {
+        loadStatusList();
+        loadAddPetDropdowns(); // refresh dropdown
+    })
+    .catch(err => {
+        console.error(err);
+        alert(err.message || "Failed to delete status");
+    });
+}
 
 /* Make the dialog close by clicking the background  */
 function enableDialogBackgroundClose(dialogId) {
@@ -565,7 +658,8 @@ document.addEventListener("DOMContentLoaded", function () {
     enableDialogBackgroundClose("loginDialog");
     enableDialogBackgroundClose("addCardDialog");
     enableDialogBackgroundClose("speciesDialog");
+    enableDialogBackgroundClose("statusDialog");
+
     // enableDialogBackgroundClose("breedsDialog");
-    // enableDialogBackgroundClose("statusDialog");
 });
 

@@ -24,7 +24,7 @@
             <div class="actionBtn" onclick=showAddCardDialog()>+ Pets</div>
             <div class="actionBtn" onclick=showSpeciesDialog()>+/- Species</div>
             <div class="actionBtn" onclick=showAddCardDialog()>+/- Breeds</div>
-            <div class="actionBtn" onclick=showAddCardDialog()>+/- Adoption Status</div>
+            <div class="actionBtn" onclick=showStatusDialog()>+/- Adoption Status</div>
         </div>
 
         <!-- Add Card Dialog -->
@@ -119,7 +119,7 @@
         </dialog>
 
         <!-- Add Species -->
-        <dialog id="speciesDialog" class="addCardDialog">
+        <dialog id="speciesDialog" class="speciesDialog">
             <div class="windowBar">
                 <button class="cancelButton" onclick="removeSpeciesDialog()">❌</button>
             </div>
@@ -133,13 +133,30 @@
                 <br>
                 <button class="submitForm" type="submit">Add Species</button>
             </form>
-            <br>
             
             <div id="speciesList" class="speciesList"></div>
         </dialog>
 
         <!-- Add/Remove Breeds -->
         <!-- Add/Remove Adoption Status -->
+        <dialog id="statusDialog" class="statusDialog">
+            <div class="windowBar">
+                <button class="cancelButton" onclick="removeStatusDialog()">❌</button>
+            </div>
+            
+            <div class="banner">
+                <h2>Manage Adoption Statuses</h2>
+            </div>
+            <br>
+            <form id="statusForm" onsubmit="event.preventDefault(); addStatus();">
+                <input type="text" id="newStatusName" class="dialogTextInput" placeholder="New status name (e.g. Adopted)" required>
+                <br>
+                <button class="submitForm" type="submit">Add Status</button>
+            </form>
+            
+            <div id="statusList" class="statusList"></div>
+        </dialog>
+
 
         <div id="galleryCarousel" class="gallery">
             <!--
