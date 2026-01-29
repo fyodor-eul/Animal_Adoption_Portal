@@ -203,7 +203,7 @@ function fetchAnimalData() {
 
                 // Only admins see this button
                 const deleteBtnHtml = isAdmin
-                    ? `<button class="deletePetBtn" onclick="deletePet(${pet.id})">🗑 Delete</button>`
+                    ? `<button class="deletePetBtn" onclick="deletePet(${pet.id})">Delete</button>`
                     : "";
 
                 html += `
@@ -211,18 +211,20 @@ function fetchAnimalData() {
                         ${deleteBtnHtml}
                         <img src="${pet.profileImg}" alt="${pet.name}">
                         <dl class="petDetails">
-                            <dt>Name</dt><dd>${pet.name}</dd>
+                            <div class="detailRow"><dt>Name</dt><dd>${pet.name}</dd></div>
 
-                            <dt>Species</dt><dd>${pet.speciesName || "-"}</dd>
-                            <dt>Breed</dt><dd>${pet.breedName || "-"}</dd>
-                            <dt>Gender</dt><dd>${pet.gender || "-"}</dd>
+                            <div class="detailRow"><dt>Species</dt><dd>${pet.speciesName || "-"}</dd></div>
+                            <div class="detailRow"><dt>Breed</dt><dd>${pet.breedName || "-"}</dd></div>
+                            <div class="detailRow"><dt>Gender</dt><dd>${pet.gender || "-"}</dd></div>
 
-                            <dt>Status</dt>
-                            <dd>
-                                <span class="petStatus ${statusClass}">
-                                    ${pet.adoptionStatusName || "-"}
-                                </span>
-                            </dd>
+                            <div class="detailRow">
+                                <dt>Status</dt>
+                                <dd>
+                                    <span class="petStatus ${statusClass}">
+                                        ${pet.adoptionStatusName || "-"}
+                                    </span>
+                                </dd>
+                            </div>
 
                             <p class="petDesc">${pet.temperament || ""}</p>
                         </dl>
@@ -429,3 +431,21 @@ function loadAddPetDropdowns() {
     };
 };
 
+function logoutUser() {
+    fetch("/logout", {
+        method: "POST",
+        credentials: "same-origin"
+    })
+    .then(res => {
+        if (!res.ok) return res.text().then(t => { throw new Error(t); });
+        return res.text();
+    })
+    .then(msg => {
+        console.log(msg);
+        window.location.href = "/";  // redirect to the home page
+    })
+    .catch(err => {
+        console.error("Logout error:", err);
+        alert("Failed to logout.");
+    });
+}

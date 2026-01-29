@@ -25,8 +25,13 @@ h1{
     height: 40px;
     
     /* Style */
-    background-color: bisque;
+    background-color: rgb(244, 229, 211, 0.90);
     border-radius: 20px;
+
+    /* To make it stick at the top */
+    position: sticky;
+    top: 55px;
+    z-index: 50;
 }
 
 .actionBtn{
@@ -83,22 +88,6 @@ h1{
     display: block;
 }
 
-/* Details area */
-.petDetails{
-    margin: 0;
-    padding: 14px 14px 16px 14px;
-}
-
-/* Name header */
-.petDetails dt{
-    font-size: 12px;
-    letter-spacing: 0.5px;
-    color: rgba(75, 75, 75, 0.7);
-    text-transform: uppercase;
-    margin-top: 10px;
-}
-
-
 /* Delete Button */
 .petCard {
     position: relative; /* to allow the delete to be absolute. This makes sure the delte button (absolute) stays inside its own card, not the whole page */
@@ -125,24 +114,44 @@ h1{
 }
 
 /* Pet Information */
-.petDetails dd{
-    margin: 4px 0 0 0;
-    font-size: 16px;
-    color: rgba(40, 40, 40, 0.95);
+
+.detailRow {
+    /* Wrapper for each row */
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.petDetails{
+    /* Display */
+    display: flex;
+    flex-direction: column;
+
+    /* Box */
+    margin: 0;
+    padding: 14px 14px 16px 14px;
+}
+
+.detailRow dd {
+    /* Key */
+    margin: 0;
+    flex: 1;
+    font-size: 15px;
     font-weight: 600;
-}
-
-.petDetails dt:first-of-type{
-    margin-top: 0;
-}
-
-.petDetails dd:first-of-type{
-    font-size: 20px;
-    font-weight: 700;
     color: rgb(133, 93, 32);
 }
 
+.detailRow dt {
+    /* Value */
+    flex: 0 0 90px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: rgba(80, 80, 80, 0.7);
+}
+
 .petDesc{
+    /* Temperament Description */
     margin: 12px 0 0 0;
     font-size: 14px;
     line-height: 1.35;

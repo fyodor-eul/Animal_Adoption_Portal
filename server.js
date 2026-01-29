@@ -341,6 +341,14 @@ app.get("/api/breeds", function(req, res) {
     });
 });
 
+app.post("/logout", function(req, res) {
+    req.session.destroy(err => {
+        if (err) return res.status(500).send("Logout failed");
+        res.clearCookie("connect.sid");
+        res.send("Logged out");
+    });
+});
+
 
 app.listen(1338, "127.0.0.1");
 console.log("[+] Web server is running @ http://127.0.0.1:1338");
