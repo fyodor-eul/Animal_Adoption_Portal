@@ -21,10 +21,10 @@
         <h1>Our Lovely Residents</h1>
         <!-- Action Bar (only for admins)-->
         <div class="actionBar" id="actionBar">
-            <div class="actionBtn" onclick=showAddCardDialog()>[+] Pets</div>
-            <div class="actionBtn" onclick=showAddCardDialog()>[+/-] Species</div>
-            <div class="actionBtn" onclick=showAddCardDialog()>[+/-] Breeds</div>
-            <div class="actionBtn" onclick=showAddCardDialog()>[+/-] Adoption Status</div>
+            <div class="actionBtn" onclick=showAddCardDialog()>+ Pets</div>
+            <div class="actionBtn" onclick=showSpeciesDialog()>+/- Species</div>
+            <div class="actionBtn" onclick=showAddCardDialog()>+/- Breeds</div>
+            <div class="actionBtn" onclick=showAddCardDialog()>+/- Adoption Status</div>
         </div>
 
         <!-- Add Card Dialog -->
@@ -44,7 +44,7 @@
 
                 <!-- Name -->
                 <!-- <label for="name">Pet Name:</label> -->
-                <input type="text" id="name" name="name" class="profileNameInput" placeholder="Pet's Name" required>
+                <input type="text" id="name" name="name" class="dialogTextInput" placeholder="Pet's Name" required>
                 <br>
 
                 <!-- Date of Birth -->
@@ -111,13 +111,33 @@
                 <!-- Description -->
                 <label for="description">Description:</label>
                 <textarea id="description" name="temperament" rows="4" placeholder="Enter personality or notes..." required></textarea>
+                <br>
 
                 <!-- Submit --> 
-                <button type="submit">Add Pet</button>
+                <button class="submitForm" type="submit">Add Pet</button>
             </form>
         </dialog>
 
-        <!-- Add/Remove Species -->
+        <!-- Add Species -->
+        <dialog id="speciesDialog" class="addCardDialog">
+            <div class="windowBar">
+                <button class="cancelButton" onclick="removeSpeciesDialog()">❌</button>
+            </div>
+            
+            <div class="banner">
+                <h2>Manage Species</h2>
+            </div>
+            <br>
+            <form id="speciesForm" onsubmit="event.preventDefault(); addSpecies();">
+                <input type="text" id="newSpeciesName" class="dialogTextInput" placeholder="New species name (e.g. Dog)" required>
+                <br>
+                <button class="submitForm" type="submit">Add Species</button>
+            </form>
+            <br>
+            
+            <div id="speciesList" class="speciesList"></div>
+        </dialog>
+
         <!-- Add/Remove Breeds -->
         <!-- Add/Remove Adoption Status -->
 

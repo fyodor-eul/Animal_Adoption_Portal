@@ -449,3 +449,123 @@ function logoutUser() {
         alert("Failed to logout.");
     });
 }
+
+
+/* Manage Species Dialog (Admin) */
+
+function showSpeciesDialog() {
+    closeAllDialogs();
+    document.getElementById("speciesDialog").showModal();
+    loadSpeciesList();
+}
+
+function removeSpeciesDialog() {
+    document.getElementById("speciesDialog").close();
+}
+
+function loadSpeciesList() {
+    fetch("/api/species", { credentials: "same-origin" })
+        .then(res => {
+            if (!res.ok) return res.text().then(t => { throw new Error(t); });
+            return res.json();
+        })
+        .then(rows => {
+            const container = document.getElementById("speciesList");
+            let html = "<ul style='list-style:none; padding-left:0;'>";
+            rows.forEach(s => {
+                html += `
+                    <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0;">
+                        <span>${s.name}</span>
+                        <button type="button" onclick="deleteSpecies(${s.id})">Remove</button>
+                    </li>
+                `;
+            });
+            html += "</ul>";
+            container.innerHTML = html;
+        })
+        .catch(err => {
+            console.error(err);
+            alert(err.message || "Failed to load species");
+        });
+}
+
+function addSpecies() {
+    const input = document.getElementById("newSpeciesName");
+    const name = input.value.trim();
+    if (!name) return;
+
+    fetch("/api/species", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ name: name })
+    })
+    .then(res => {
+        if (!res.ok) return res.text().then(t => { throw new Error(t); });
+        return res.json();
+    })
+    .then(() => {
+        input.value = "";
+        loadSpeciesList();
+
+        // Optional: refresh dropdown in Add Pet dialog if it is open
+        loadAddPetDropdowns();
+    })
+    .catch(err => {
+        console.error(err);
+        alert(err.message || "Failed to add species");
+    });
+}
+
+function deleteSpecies(id) {
+    const ok = confirm("Delete this species? (If breeds use it, delete may fail.)");
+    if (!ok) return;
+
+    fetch("/api/species/" + id, {
+        method: "DELETE",
+        credentials: "same-origin"
+    })
+    .then(res => {
+        if (!res.ok) return res.text().then(t => { throw new Error(t); });
+        return res.text();
+    })
+    .then(() => {
+        loadSpeciesList();
+        loadAddPetDropdowns(); // refresh dropdown
+    })
+    .catch(err => {
+        console.error(err);
+        alert(err.message || "Failed to delete species");
+    });
+}
+
+
+/* Make the dialog close by clicking the background  */
+function enableDialogBackgroundClose(dialogId) {
+    const dialog = document.getElementById(dialogId);
+    if(!dialog) return;   // to skip the dialogs the exist in other pages
+
+    dialog.addEventListener("click", function (event) {
+        const rect = dialog.getBoundingClientRect();     // get the position and dimensions of the dialog box
+
+        const clickedInDialog = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+        /*
+        * Since (0,0) is at the top left corner,
+        * The cursor position must be greater than the left edge and less than the right edge
+        * greater than the top edage and less than the bottom edge
+        */
+
+        if (!clickedInDialog) {
+            dialog.close();
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    enableDialogBackgroundClose("loginDialog");
+    enableDialogBackgroundClose("addCardDialog");
+    enableDialogBackgroundClose("speciesDialog");
+    // enableDialogBackgroundClose("breedsDialog");
+    // enableDialogBackgroundClose("statusDialog");
+});
+

@@ -341,6 +341,7 @@ app.get("/api/breeds", function(req, res) {
     });
 });
 
+/* Log out */
 app.post("/logout", function(req, res) {
     req.session.destroy(err => {
         if (err) return res.status(500).send("Logout failed");
@@ -348,6 +349,58 @@ app.post("/logout", function(req, res) {
         res.send("Logged out");
     });
 });
+
+
+function requireAdmin(req, res, next) {
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).send("Unauthorized");
+    }
+    const type = String(req.session.user.type || "").toLowerCase();
+    if (type !== "admin") {
+        return res.status(403).send("Forbidden: admin only");
+    }
+    next();
+}
+
+/* Create species */
+app.post("/api/species", requireAdmin, function(req, res) {
+    const name = (req.body.name || "").trim();
+    if (!name) return res.status(400).send("Species name required");
+
+    db.query(
+        "INSERT INTO animaladoption.species (name) VALUES (?)",
+        [name],
+        function(err, result) {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("Database error");
+            }
+            res.json({ id: result.insertId, name: name });
+        }
+    );
+});
+
+/* Delete species */
+app.delete("/api/species/:id", requireAdmin, function(req, res) {
+    const id = req.params.id;
+
+    db.query(
+        "DELETE FROM animaladoption.species WHERE id = ?",
+        [id],
+        function(err, result) {
+            if (err) {
+                // If this species is referenced by breeds, MySQL may block delete (FK constraint)
+                console.error(err);
+                return res.status(400).send("Cannot delete species (it may be used by breeds)");
+            }
+            if (!result || result.affectedRows === 0) {
+                return res.status(404).send("Species not found");
+            }
+            res.send("Deleted");
+        }
+    );
+});
+
 
 
 app.listen(1338, "127.0.0.1");
