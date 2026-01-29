@@ -60,6 +60,7 @@ function loginUser() {
     .catch(err => {
         console.error("Login error:", err);
         alert(err.message || "Login failed. Please try again.");
+        location.href = "/";
     });
 }
 
@@ -160,6 +161,7 @@ function openTab(name){
 var addCardDialog = document.getElementById("addCardDialog");
 
 function showAddCardDialog(){
+    loadAddPetDropdowns();
     addCardDialog.showModal();
 }
 
@@ -168,7 +170,7 @@ function removeAddCardDialog(){
 }
 
 function fetchAnimalData() {
-    // 1) Get session user info first
+    // Get session user info first
     fetch("/me", { credentials: "same-origin" })
         .then(res => {
             if (!res.ok) return { authenticated: false };
@@ -178,7 +180,13 @@ function fetchAnimalData() {
             const isAdmin = me && me.authenticated &&
                 String(me.user.type || "").toLowerCase() === "admin";
 
-            // 2) Fetch gallery data
+            // Show/hide action bar
+            const actionBar = document.getElementById("actionBar");
+            if (actionBar) {
+                actionBar.style.display = isAdmin ? "flex" : "none";
+            }
+
+            // Fetch gallery data
             return fetch("/gallery", { credentials: "same-origin" })
                 .then(res => {
                     if (!res.ok) return res.text().then(t => { throw new Error(t); });
@@ -228,6 +236,7 @@ function fetchAnimalData() {
         .catch(err => {
             console.error(err);
             alert(err.message || "Failed to load gallery");
+            location.href = "/";
         });
 }
 
@@ -322,3 +331,101 @@ function addAnimalData(){
         console.error("Error : ", error);
     });
 }
+
+
+function populateSelect(selectEl, items, placeholderText) {
+    /*
+    * This function fills a <select> dropdown with options based on data loaded from the database
+    */
+    // Make sure the dropdown option is clear before populating any values 
+    while (selectEl.options.length > 0) {
+        selectEl.remove(0);
+    }
+
+    // Insert placeholder text
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = placeholderText;
+    selectEl.appendChild(placeholder);
+
+    // Insert actual items
+    for (let i = 0; i < items.length; i++) {
+        const opt = document.createElement("option");
+        opt.value = items[i].id;
+        opt.textContent = items[i].name;
+        selectEl.appendChild(opt);
+    }
+}
+
+function loadAddPetDropdowns() {
+    /*
+    * This function loads lists of species and adoption statuses
+    */
+
+    /* Select Elements */
+    const speciesSelect = document.getElementById("species");
+    const breedSelect = document.getElementById("breed");
+    const statusSelect = document.getElementById("adoptionStatus");
+
+    /* Load species */
+    fetch("/api/species", { credentials: "same-origin" }) // credentials: "same-origin" sends cookies along with this request
+        .then(res => {
+            if (!res.ok) return res.text().then(t => { throw new Error(t); });
+            return res.json();
+        })
+        .then(speciesRows => {
+            populateSelect(speciesSelect, speciesRows, "Select Species");
+
+            /* Load breeds for initial state (none selected -> show empty list) */
+            populateSelect(breedSelect, [], "Select Breed");
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Failed to load species dropdown");
+            location.href = "/";
+        });
+
+    /* Load adoption statuses */
+    fetch("/api/adoption-status", { credentials: "same-origin" }) 
+        .then(res => {
+            if (!res.ok) return res.text().then(t => { throw new Error(t); });
+            return res.json();
+        })
+        .then(statusRows => {
+            populateSelect(statusSelect, statusRows, "Select Status");
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Failed to load adoption status dropdown");
+            location.href = "/";
+        });
+
+    /* When species changes, load breeds for that species */
+    speciesSelect.onchange = function() {
+        const speciesId = speciesSelect.value;
+
+        /* refresh breed dropdown immediately */
+        populateSelect(breedSelect, [], "Loading breeds...");
+
+        if (!speciesId) {
+            populateSelect(breedSelect, [], "Select Breed");
+            return;
+        }
+
+        fetch("/api/breeds?speciesId=" + encodeURIComponent(speciesId), { credentials: "same-origin" })
+            .then(res => {
+                if (!res.ok) return res.text().then(t => { throw new Error(t); });
+                return res.json();
+            })
+            .then(breedRows => {
+                populateSelect(breedSelect, breedRows, "Select Breed");
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Failed to load breeds dropdown");
+                populateSelect(breedSelect, [], "Select Breed");
+                location.href = "/";
+            });
+    };
+};
+

@@ -12,16 +12,22 @@
                 <div id="homeTab" class="tab" onclick="openTab('home')"> Home </div>
                 <div id="adoptTab" class="tab active" onclick="openTab('adopt')"> Gallery </div>
                 <div id="aboutTab" class="tab" onclick="openTab('about')"> About </div>
+                <div id="logoutTab" class="tab" onclick="logoutUser()"> Logout </div>
             </div>
 
             <!-- Search bar and Filter -->
         </header>
 
-        <h1>Gallery</h1>
-        <div class="actionBar">
-            <button onclick=showAddCardDialog()>Add Pet</button>
+        <h1>Our Lovely Residents</h1>
+        <!-- Action Bar (only for admins)-->
+        <div class="actionBar" id="actionBar">
+            <div class="actionBtn" onclick=showAddCardDialog()>[+] Pets</div>
+            <div class="actionBtn" onclick=showAddCardDialog()>[+/-] Species</div>
+            <div class="actionBtn" onclick=showAddCardDialog()>[+/-] Breeds</div>
+            <div class="actionBtn" onclick=showAddCardDialog()>[+/-] Adoption Status</div>
         </div>
 
+        <!-- Add Card Dialog -->
         <dialog id="addCardDialog" class="addCardDialog">
             <div class="windowBar">
                 <button class="cancelButton" onclick=removeAddCardDialog()>❌</button>
@@ -53,12 +59,11 @@
                     <label for="species" class="textLabels">Species:</label>
                     <select id="species" name="species" required>
                         <option value="">Select Species</option>
-                        <!-- Need to make this to dynamically populate the entries -->
-                        <option value="1">Dog</option>
+                        <!--option value="1">Dog</option>
                         <option value="2">Cat</option>
                         <option value="3">Rabbit</option>
                         <option value="4">Bird</option>
-                        <option value="5">Hamster</option>
+                        <option value="5">Hamster</option-->
                     </select>
                 </div>
                 <br>
@@ -68,9 +73,9 @@
                     <label for="breed" class="textLabels">Breed:</label>
                     <select id="breed" name="breed" required>
                         <option value="">Select Breed</option>
-                        <option value="1">Golden Retriever</option>
+                        <!--option value="1">Golden Retriever</option>
                         <option value="2">German Shepherd</option>
-                        <option value="3">British Shorthair</option>
+                        <option value="3">British Shorthair</option-->
                     </select>
                 </div>
                 <br>
@@ -94,11 +99,11 @@
                     <label for="adoptionStatus" class="textLabels">Adoption Status:</label>
                     <select id="adoptionStatus" name="adoptionStatus" required>
                         <option value="">Select Status</option>
-                        <option value="1">Available</option>
+                        <!--option value="1">Available</option>
                         <option value="2">Reserved</option>
                         <option value="3">Adopted</option>
                         <option value="4">Under Medical Care</option>
-                        <option value="5">Fostered</option>
+                        <option value="5">Fostered</option-->
                     </select>
                 </div>
                 <br>
@@ -111,6 +116,10 @@
                 <button type="submit">Add Pet</button>
             </form>
         </dialog>
+
+        <!-- Add/Remove Species -->
+        <!-- Add/Remove Breeds -->
+        <!-- Add/Remove Adoption Status -->
 
         <div id="galleryCarousel" class="gallery">
             <!--

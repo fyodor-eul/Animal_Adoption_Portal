@@ -59,10 +59,10 @@ app.use((req, res, next) => {
 
 app.use(session({
     store: sessionStore,
-    resave: false,             // disable saving to the database everytime (update only when the data has been modified)
+    resave: false,              // disable saving to the database everytime (update only when the data has been modified)
     secret: 'secretkey',
-    saveUninitialized: false,  // disable saving the cookies in the client's browser before we set any cookie values
-    cookie: { maxAge: 60000 }  // Cookie age : 30s
+    saveUninitialized: false,   // disable saving the cookies in the client's browser before we set any cookie values
+    cookie: { maxAge: 300000 }  // Cookie age : 5mins
 }));
 
 app.post('/login', (req, res) => {
@@ -277,6 +277,70 @@ app.delete("/gallery/:id", function(req, res) {
         return res.status(200).send("Deleted");
     });
 });
+
+
+/* APT end points for dropdown */
+// Species list
+app.get("/api/species", function(req, res) {
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).send("Unauthorized");
+    }
+
+    db.query("SELECT id, name FROM animaladoption.species ORDER BY name", function(err, rows) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Database error");
+        }
+        //console.log(rows);
+        res.json(rows);
+    });
+});
+
+// Adoption status list
+app.get("/api/adoption-status", function(req, res) {
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).send("Unauthorized");
+    }
+
+    db.query("SELECT id, name FROM animaladoption.adoptionStatus ORDER BY id", function(err, rows) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Database error");
+        }
+        res.json(rows);
+    });
+});
+
+// Breed list
+app.get("/api/breeds", function(req, res) {
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).send("Unauthorized");
+    }
+
+    const speciesId = req.query.speciesId;
+
+    var sql = `
+        SELECT b.id, b.name
+        FROM animaladoption.breeds b
+    `;
+    const params = [];
+
+    if (speciesId) {
+        sql += " WHERE b.species_id = ? ";
+        params.push(speciesId);
+    }
+
+    sql += " ORDER BY b.name";
+
+    db.query(sql, params, function(err, rows) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Database error");
+        }
+        res.json(rows);
+    });
+});
+
 
 app.listen(1338, "127.0.0.1");
 console.log("[+] Web server is running @ http://127.0.0.1:1338");

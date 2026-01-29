@@ -4,16 +4,39 @@ h1{
     /* Box */
     margin-top: 60px;
     margin-bottom: 10px;
+    text-align: center;
+
+    /* Design */
+    color: rgb(95, 95, 92);
 }
 
 .actionBar{
+    /* Display */
     display: flex;
     justify-self: center;
+    gap: 22px;
 
+    /* Box */
+    padding: 0px 50px;
+    margin: 12px;
+
+    /* Dimensions */
+    width: 1250px;
+    height: 40px;
+    
+    /* Style */
     background-color: bisque;
-    padding: 0px 100px;
+    border-radius: 20px;
+}
 
-    width: 1100px;
+.actionBtn{
+    /**/
+    padding: 10px 2px;
+}
+
+.actionBtn:hover{
+    color: rgb(184, 156, 108);
+    border-bottom: 4px solid rgb(184, 156, 108);
 }
 
 .gallery{
