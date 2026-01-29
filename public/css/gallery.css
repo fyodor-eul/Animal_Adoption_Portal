@@ -75,6 +75,33 @@ h1{
     margin-top: 10px;
 }
 
+
+/* Delete Button */
+.petCard {
+    position: relative; /* to allow the delete to be absolute. This makes sure the delte button (absolute) stays inside its own card, not the whole page */
+}
+
+.deletePetBtn{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    border: 0;
+    padding: 8px 10px;
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    font-size: 14px;
+
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+.deletePetBtn:hover{
+    background: rgba(255, 220, 220, 0.95);
+}
+
+/* Pet Information */
 .petDetails dd{
     margin: 4px 0 0 0;
     font-size: 16px;
@@ -229,3 +256,4 @@ h1{
     border-radius: 5px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+

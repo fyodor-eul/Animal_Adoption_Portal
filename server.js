@@ -28,10 +28,11 @@ const sessionStore = new MySQLStore({}/* session store options */, db);
 
 /* File Storage */
 const mul_storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "public/images/profiles"),
+  destination: (req, file, cb) => cb(null, "public/images/profiles/pets"),
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname)
 });
-const upload = multer({ mul_storage });
+const upload = multer({ storage: mul_storage });
+
 
 /* Middleware Stacks in Order */
 /* - Applicatoin middlewares */
@@ -61,7 +62,7 @@ app.use(session({
     resave: false,             // disable saving to the database everytime (update only when the data has been modified)
     secret: 'secretkey',
     saveUninitialized: false,  // disable saving the cookies in the client's browser before we set any cookie values
-    cookie: { maxAge: 30000 }  // Cookie age : 30s
+    cookie: { maxAge: 60000 }  // Cookie age : 30s
 }));
 
 app.post('/login', (req, res) => {
@@ -87,19 +88,22 @@ app.post('/login', (req, res) => {
             return res.status(401).send("Unauthorized: wrong password");
         }
 
-        var sql = "SELECT * FROM animaladoption.userTypes WHERE id = ?";
-        db.query(sql, [user.type], function(error, rows){
-            user.type = rows[0].name;
-            console.log(user.type);
+        /* Getting user type */
+        db.query("SELECT * FROM animaladoption.userTypes WHERE id = ?", [user.type], function(error, rows){
+            if (error) return res.status(500).send("Internal Server Error");
+            const typeName = rows[0].name;
 
-            /* Setting user session */
+            /* Setting Session Values */
             req.session.authenticated = true;
             req.session.user = {
+                id: user.id,
                 username: user.name,
-                password: user.password,
-                type: user.type
+                typeId: user.type,
+                type: typeName
             };
-            return res.status(200).send(`Successful Login`);
+
+            /* Return Successful */
+            return res.status(200).send("Successful Login");
         });
     });
 });
@@ -139,12 +143,30 @@ app.post('/register', function(req, res) {
     });
 });
 
-
 app.post('/gallery', upload.single("profileImg"), function(req, res){
 
-    const imgUrl = `images/profiles/${req.file.filename}`;
+    // Must be logged in
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).send("Unauthorized");
+    }
 
-    const sql = "INSERT INTO animaladoption.animals (name, profileImg, dateOfBirth, breed_id, gender, temperament, adoptionStatus_id, addedBy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    // Must have uploaded image
+    if (!req.file) {
+        return res.status(400).send("Profile image is required");
+    }
+
+    // Check if the image file is submitted
+    if (!req.file) {
+        return res.status(400).send("Profile image upload failed or missing.");
+    }
+
+    const imgUrl = `images/profiles/pets/${req.file.filename}`;
+
+    const sql = `
+        INSERT INTO animaladoption.animals
+        (name, profileImg, dateOfBirth, breed_id, gender, temperament, adoptionStatus_id, addedBy)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
     var parameter = [
         req.body.name,
@@ -154,7 +176,7 @@ app.post('/gallery', upload.single("profileImg"), function(req, res){
         req.body.gender,
         req.body.temperament,
         req.body.adoptionStatus,
-        req.body.addedBy
+        req.session.user.id
     ];
 
     db.query(sql, parameter, function(error, result){
@@ -170,6 +192,7 @@ app.post('/gallery', upload.single("profileImg"), function(req, res){
         );
     });
 });
+
 
 app.route('/gallery').get(function(req, res){
     /* Selecting from animals table joining with breeds, species and adoptionStatus to map the IDs with name. (excluding IDs themselves to be shown)*/
@@ -207,6 +230,52 @@ app.route('/gallery').get(function(req, res){
             //console.log(result);
         }
     })
+});
+
+app.get("/me", function(req, res) {
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).json({ authenticated: false });
+    }
+
+    return res.json({
+        authenticated: true,
+        user: {
+            username: req.session.user.username,
+            type: req.session.user.type
+        }
+    });
+});
+
+app.delete("/gallery/:id", function(req, res) {
+    // Must be logged in
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).send("Unauthorized");
+    }
+
+    // Must be admin
+    const type = String(req.session.user.type || "").toLowerCase();
+    if (type !== "admin") {
+        return res.status(403).send("Forbidden: admin only");
+    }
+
+    const animalId = req.params.id;
+    if (!animalId) {
+        return res.status(400).send("Missing animal id");
+    }
+
+    const sql = "DELETE FROM animaladoption.animals WHERE id = ?";
+    db.query(sql, [animalId], function(err, result) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Database error");
+        }
+
+        if (!result || result.affectedRows === 0) {
+            return res.status(404).send("Animal not found");
+        }
+
+        return res.status(200).send("Deleted");
+    });
 });
 
 app.listen(1338, "127.0.0.1");

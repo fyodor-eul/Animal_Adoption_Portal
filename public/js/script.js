@@ -168,23 +168,39 @@ function removeAddCardDialog(){
 }
 
 function fetchAnimalData() {
-    fetch("/gallery")
+    // 1) Get session user info first
+    fetch("/me", { credentials: "same-origin" })
         .then(res => {
-            if (!res.ok) return res.text().then(t => { throw new Error(t); });
+            if (!res.ok) return { authenticated: false };
             return res.json();
         })
-        .then(data => {
-            const gallery = document.getElementById("galleryCarousel");
+        .then(me => {
+            const isAdmin = me && me.authenticated &&
+                String(me.user.type || "").toLowerCase() === "admin";
 
+            // 2) Fetch gallery data
+            return fetch("/gallery", { credentials: "same-origin" })
+                .then(res => {
+                    if (!res.ok) return res.text().then(t => { throw new Error(t); });
+                    return res.json();
+                })
+                .then(data => ({ data, isAdmin }));
+        })
+        .then(({ data, isAdmin }) => {
+            const gallery = document.getElementById("galleryCarousel");
             let html = "<ul>";
 
             data.forEach(pet => {
-                console.log(pet);
-                // Status badge class
                 const statusClass = "status-" + String(pet.adoptionStatusName || "").toLowerCase();
+
+                // Only admins see this button
+                const deleteBtnHtml = isAdmin
+                    ? `<button class="deletePetBtn" onclick="deletePet(${pet.id})">🗑 Delete</button>`
+                    : "";
 
                 html += `
                     <li class="petCard">
+                        ${deleteBtnHtml}
                         <img src="${pet.profileImg}" alt="${pet.name}">
                         <dl class="petDetails">
                             <dt>Name</dt><dd>${pet.name}</dd>
@@ -213,6 +229,28 @@ function fetchAnimalData() {
             console.error(err);
             alert(err.message || "Failed to load gallery");
         });
+}
+
+function deletePet(id) {
+    const ok = confirm("Delete this pet? This cannot be undone.");
+    if (!ok) return;
+
+    fetch(`/gallery/${id}`, {
+        method: "DELETE",
+        credentials: "same-origin"
+    })
+    .then(res => {
+        if (!res.ok) return res.text().then(t => { throw new Error(t); });
+        return res.text();
+    })
+    .then(() => {
+        // Refresh list after delete
+        fetchAnimalData();
+    })
+    .catch(err => {
+        console.error(err);
+        alert(err.message || "Delete failed");
+    });
 }
 
 function getAge(dobString) {
@@ -276,7 +314,9 @@ function addAnimalData(){
     })
     .then(data => {
         //location.href = "gallery.html";
-        console.log("Added Successfully");
+        fetchAnimalData();                               // Refresh the gallery
+        removeAddCardDialog();                           // Close the dialog
+        document.getElementById("addCardForm").reset();  // Clear the form if any
     })
     .catch(error => {
         console.error("Error : ", error);
