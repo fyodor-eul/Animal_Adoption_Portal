@@ -23,7 +23,7 @@
         <div class="actionBar" id="actionBar">
             <div class="actionBtn" onclick=showAddCardDialog()>+ Pets</div>
             <div class="actionBtn" onclick=showSpeciesDialog()>+/- Species</div>
-            <div class="actionBtn" onclick=showAddCardDialog()>+/- Breeds</div>
+            <div class="actionBtn" onclick=showBreedDialog()>+/- Breeds</div>
             <div class="actionBtn" onclick=showStatusDialog()>+/- Adoption Status</div>
         </div>
 
@@ -36,6 +36,16 @@
                 <h2>Add New Pet</h2>
             </div>
             <br>
+            <div class="previewWrap">
+                <img id="previewImg" src="" style="
+                    width: 100%;
+                    height: 220px;
+                    object-fit: cover;
+                    border-radius: 10px;
+                    margin-top: 10px;
+                    display: none;
+                ">
+            </div>
             <form id="addCardForm" method="post" enctype="multipart/form-data" onsubmit="event.preventDefault(); addAnimalData();">
                 <!-- Profile Image -->
                 <label for="profileImg" class="imageUpload">Upload Profile Image</label>
@@ -59,11 +69,6 @@
                     <label for="species" class="textLabels">Species:</label>
                     <select id="species" name="species" required>
                         <option value="">Select Species</option>
-                        <!--option value="1">Dog</option>
-                        <option value="2">Cat</option>
-                        <option value="3">Rabbit</option>
-                        <option value="4">Bird</option>
-                        <option value="5">Hamster</option-->
                     </select>
                 </div>
                 <br>
@@ -73,9 +78,6 @@
                     <label for="breed" class="textLabels">Breed:</label>
                     <select id="breed" name="breed" required>
                         <option value="">Select Breed</option>
-                        <!--option value="1">Golden Retriever</option>
-                        <option value="2">German Shepherd</option>
-                        <option value="3">British Shorthair</option-->
                     </select>
                 </div>
                 <br>
@@ -99,11 +101,6 @@
                     <label for="adoptionStatus" class="textLabels">Adoption Status:</label>
                     <select id="adoptionStatus" name="adoptionStatus" required>
                         <option value="">Select Status</option>
-                        <!--option value="1">Available</option>
-                        <option value="2">Reserved</option>
-                        <option value="3">Adopted</option>
-                        <option value="4">Under Medical Care</option>
-                        <option value="5">Fostered</option-->
                     </select>
                 </div>
                 <br>
@@ -130,14 +127,38 @@
             <br>
             <form id="speciesForm" onsubmit="event.preventDefault(); addSpecies();">
                 <input type="text" id="newSpeciesName" class="dialogTextInput" placeholder="New species name (e.g. Dog)" required>
+                <div id="speciesList" class="speciesList"></div>
                 <br>
                 <button class="submitForm" type="submit">Add Species</button>
             </form>
             
-            <div id="speciesList" class="speciesList"></div>
         </dialog>
 
         <!-- Add/Remove Breeds -->
+        <dialog id="breedDialog" class="breedDialog">
+            <div class="windowBar">
+                <button class="cancelButton" onclick="removeBreedDialog()">❌</button>
+            </div>
+            
+            <div class="banner">
+                <h2>Manage Breeds</h2>
+            </div>
+            <br>
+            <form id="breedForm" onsubmit="event.preventDefault(); addBreed();">
+                <div class="breedRow">
+                    <input type="text" id="newBreedName" class="dialogTextInput" placeholder="New breed name (e.g. Golden Retriever)" required>
+                    <!-- dropdown -->
+                    <select id="species-breedList" name="species" required>
+                        <option value="">Select Species</option>
+                    </select>
+                </div>
+                <div id="breedList" class="breedList"></div>
+                <br>
+                <button class="submitForm" type="submit">Add Breed</button>
+            </form>
+            
+        </dialog>
+
         <!-- Add/Remove Adoption Status -->
         <dialog id="statusDialog" class="statusDialog">
             <div class="windowBar">
@@ -150,11 +171,10 @@
             <br>
             <form id="statusForm" onsubmit="event.preventDefault(); addStatus();">
                 <input type="text" id="newStatusName" class="dialogTextInput" placeholder="New status name (e.g. Adopted)" required>
+                <div id="statusList" class="statusList"></div>
                 <br>
                 <button class="submitForm" type="submit">Add Status</button>
             </form>
-            
-            <div id="statusList" class="statusList"></div>
         </dialog>
 
 

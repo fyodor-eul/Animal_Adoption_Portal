@@ -42,6 +42,7 @@ h1{
 .actionBtn:hover{
     color: rgb(184, 156, 108);
     border-bottom: 4px solid rgb(184, 156, 108);
+    cursor: pointer;
 }
 
 .gallery{
@@ -93,7 +94,12 @@ h1{
     position: relative; /* to allow the delete to be absolute. This makes sure the delte button (absolute) stays inside its own card, not the whole page */
 }
 
+.petCard:hover .deletePetBtn{
+    opacity: 1;
+}
+
 .deletePetBtn{
+    opacity: 0;
     position: absolute;
     top: 10px;
     right: 10px;
@@ -187,13 +193,15 @@ h1{
 
 /* Add Card Dialog */
 .imageUpload{
-	width: 410px;
-    display: inline-block;
+    align-self: center;
+	width: 445px;
+    display: block;
     padding: 10px 20px;
 	border: 1px dashed black;
     border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
+    box-sizing: border-box;
 
 	text-align: center;
 }
@@ -233,6 +241,10 @@ dialog .windowBar .cancelButton{
     border-radius: 10px;
 }
 
+dialog .windowBar .cancelButton:hover{
+    cursor: pointer;
+}
+
 dialog div{
     /* Display */
     display: flex;
@@ -264,9 +276,22 @@ dialog .submitForm {
 
 
 /* Add/Remove Breeds Dialog */
-/* Add/Remove Adoption Status Dialog */
+.breedRow {
+    display: flex;
+    gap: 10px;           /* spacing between input and dropdown */
+    width: 100%;
+    justify-content: space-between;
+}
+.breedRow input{
+    flex: 3;
+}
+.breedRow select {
+    flex: 1;
+    padding: 5px;
+    font-size: 14px;
 
-
+    border-radius: 10px;
+}
 
 /* Date of Birth Input */
 .dateOfBirth {
@@ -314,12 +339,12 @@ dialog .submitForm {
 
 /* Make the list container scrollable */
 #speciesList.speciesList,
+#breedList.breedList,
 #statusList.statusList{
     display: block;      /* override dialog div { display:flex } */
 }
 
-
-.speciesList, .statusList{
+.speciesList, .breedList, .statusList{
     width: 440px;
     max-height: 200px;
     overflow-y: auto;
@@ -329,14 +354,14 @@ dialog .submitForm {
     box-sizing: border-box;
 }
 
-.speciesList ul, .statusList ul{
+.speciesList ul, .breedList ul, .statusList ul{
     width: 100%;
     margin: 0;
     padding: 0;
     list-style:none; 
 }
 
-.speciesList li, .statusList li{
+.speciesList li, .breedList li, .statusList li{
     /* Display */
     display: flex;
     justify-content: space-between;
@@ -349,26 +374,26 @@ dialog .submitForm {
     border-bottom: 1px solid brown;
 }
 
-.speciesList li:hover, .statusList li:hover{
+.speciesList li:hover, .breedList li:hover, .statusList li:hover{
     border-left: 4px solid brown;
 }
 
-.speciesList li span, .statusList li span{
+.speciesList li span, .breedList li span, .statusList li span{
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: larger;
     padding: 5px;
 }
 
-.speciesList li button, .statusList li button{
+.speciesList li button, .breedList li button, .statusList li button{
     border: 0px;
     background-color: transparent;
     padding: 5px;
     opacity: 0;
 }
-.speciesList li button:hover, .statusList li button:hover{
+.speciesList li button:hover, .breedList li button:hover, .statusList li button:hover{
     color: red;
     font-weight: bold;
 }
-.speciesList li:hover button, .statusList li:hover button{
+.speciesList li:hover button, .breedList li:hover button, .statusList li:hover button{
     opacity: 1;
 }
