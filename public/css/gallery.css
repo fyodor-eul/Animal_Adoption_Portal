@@ -68,6 +68,9 @@ h1{
 
 /* Gallery Cards */
 .petCard{
+    display: flex;
+    flex-direction: column;
+
     width: 300px;
     background: rgb(255, 248, 238);
     border-radius: 14px;
@@ -75,6 +78,8 @@ h1{
 
     box-shadow: 0 10px 25px rgba(0,0,0,0.10);
     transition: transform 0.18s ease, box-shadow 0.18s ease;
+
+    position: relative; /* to allow the delete to be absolute. This makes sure the delte button (absolute) stays inside its own card, not the whole page */
 }
 
 .petCard:hover{
@@ -89,10 +94,31 @@ h1{
     display: block;
 }
 
-/* Delete Button */
-.petCard {
-    position: relative; /* to allow the delete to be absolute. This makes sure the delte button (absolute) stays inside its own card, not the whole page */
+/* Edit Button */
+.editPetBtn {
+    opacity: 0;
+    position: absolute;
+    top: 10px;
+    right: 80px;
+
+    border: 0;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
 }
+
+.petCard:hover .editPetBtn {
+    opacity: 1;
+}
+
+.editPetBtn:hover {
+    background: rgba(220, 240, 255, 0.95);
+}
+
+/* Delete Button */
 
 .petCard:hover .deletePetBtn{
     opacity: 1;
@@ -119,8 +145,126 @@ h1{
     background: rgba(255, 220, 220, 0.95);
 }
 
-/* Pet Information */
+/* View Button */
+.viewPetBtn{
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;          /* span across the card */
+    margin: auto;        /* moves the button to centre */
 
+    border: 0;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+
+    margin-top: auto;
+
+    background: rgba(231, 196, 94, 0.979);
+    color: black;
+}
+
+.viewPetBtn:hover{
+    background: rgba(239, 163, 0, 0.979);
+}
+
+
+/* Update Form */
+.editInput {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 15px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: antiquewhite;
+    transition: all 0.3s ease;
+}
+
+.editInput:hover,
+.editInput:focus {
+    border-color: cornflowerblue;
+    background: white;
+    box-shadow: 0px 0px 0px 6px rgba(74, 157, 236, 0.2);
+}
+
+.editSelect {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 15px;
+    border-radius: 8px;
+    background: antiquewhite;
+    border: 2px solid transparent;
+    transition: all .3s ease;
+}
+
+.editSelect:hover,
+.editSelect:focus {
+    border-color: cornflowerblue;
+    background-color: white;
+    box-shadow: 0px 0px 0px 6px rgba(74, 157, 236, 0.2);
+}
+
+.editTextarea {
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    background: antiquewhite;
+    border: 2px solid transparent;
+    transition: .3s;
+}
+
+.editTextarea:hover,
+.editTextarea:focus {
+    border-color: cornflowerblue;
+    background: white;
+    box-shadow: 0px 0px 0px 6px rgba(74, 157, 236, 0.2);
+}
+
+/* Save & Cancel buttons in edit mode */
+.savePetBtn,
+.cancelEditBtn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.25s;
+    font-weight: 600;
+}
+
+/* Save Button Style */
+.savePetBtn {
+    background-color: rgb(27, 160, 4);
+    color: white;
+}
+
+.savePetBtn:hover {
+    background-color: rgb(22, 130, 2);
+    transform: translateY(-2px);
+}
+
+/* Cancel Button Style */
+.cancelEditBtn {
+    background-color: rgb(255, 232, 200);
+    color: rgb(90, 60, 20);
+    margin-left: 10px;
+}
+
+.cancelEditBtn:hover {
+    background-color: rgb(255, 215, 170);
+    transform: translateY(-2px);
+}
+
+/* Layout for the buttons inside card */
+.editControls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 10px;
+}
+
+/* Pet Information */
 .detailRow {
     /* Wrapper for each row */
     display: flex;
@@ -129,9 +273,7 @@ h1{
 }
 
 .petDetails{
-    /* Display */
-    display: flex;
-    flex-direction: column;
+    flex: 1;
 
     /* Box */
     margin: 0;

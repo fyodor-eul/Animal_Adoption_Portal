@@ -143,6 +143,7 @@ app.post('/register', function(req, res) {
     });
 });
 
+/* Create Pet */
 app.post('/gallery', upload.single("profileImg"), function(req, res){
 
     // Must be logged in
@@ -294,6 +295,25 @@ app.delete("/gallery/:id", function(req, res) {
     });
 });
 
+/* Update Pet */
+app.put("/gallery/:id", requireAdmin, function(req, res) {
+    const id = req.params.id;
+    const { name, breedId, gender, adoptionStatusId, temperament } = req.body;
+
+    const sql = `
+        UPDATE animaladoption.animals
+        SET name = ?, breed_id = ?, gender = ?, adoptionStatus_id = ?, temperament = ?
+        WHERE id = ?
+    `;
+
+    db.query(sql, [name, breedId, gender, adoptionStatusId, temperament, id], function(err, result) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Update failed");
+        }
+        res.send("Updated");
+    });
+});
 
 /* APT end points for dropdown */
 // Species list
@@ -503,5 +523,5 @@ app.delete("/api/adoption-status/:id", requireAdmin, function(req, res) {
 
 
 
-app.listen(1338, "127.0.0.1");
+app.listen(1338, "0.0.0.0");
 console.log("[+] Web server is running @ http://127.0.0.1:1338");
