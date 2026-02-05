@@ -3,12 +3,14 @@ var addCardDialog = document.getElementById("addCardDialog");
 function showAddCardDialog(){
     loadAddPetDropdowns();
     addCardDialog.showModal();
+
+    const addDob = document.getElementById("dob");
+    if (addDob) addDob.max = todayYMD();
 }
 
 function removeAddCardDialog(){
     addCardDialog.close();
 }
-
 
 function fetchAnimalData() {
     // Get session user info first
@@ -134,7 +136,6 @@ function deletePet(id) {
     });
 }
 
-
 async function editPet(id) {
     const editBtn = document.getElementById(`edit-btn-${id}`);
     const card = editBtn.parentElement;
@@ -182,19 +183,22 @@ async function editPet(id) {
         ).then(r => r.json());
     }
 
-    // find current breedId by name (within the species)
+    // Find current breedId by name (within the species)
     const selectedBreed = breedRows.find(b => b.name.toLowerCase() === currentBreedName.toLowerCase());
     const selectedBreedId = selectedBreed ? selectedBreed.id : "";
 
-    // convert Age row into DOB input (edit date of birth)
+    // Convert Age row into DOB input (edit date of birth)
     const dobValue = (ageDD.dataset.dob || "").slice(0, 10); // "YYYY-MM-DD"
     ageDD.innerHTML = `<input type="date" id="edit-dob-${id}" class="editSelect" value="${dobValue}">`;
+
+    const dobInput = document.getElementById(`edit-dob-${id}`);
+    dobInput.max = todayYMD();
     
-    // find current statusId by name
+    // Find current statusId by name
     const selectedStatus = statusRows.find(st => st.name.toLowerCase() === currentStatusName.toLowerCase());
     const selectedStatusId = selectedStatus ? selectedStatus.id : "";
 
-    // swap to inputs/selects
+    // Swap to inputs and selects
     //nameDD.innerHTML = `<input id="edit-name-${id}" value="${nameDD.textContent.trim()}">`;
     nameDD.innerHTML = `<input id="edit-name-${id}" class="editInput" value="${nameDD.textContent.trim()}">`;
 

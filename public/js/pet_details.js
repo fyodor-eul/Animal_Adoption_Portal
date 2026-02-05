@@ -1,4 +1,4 @@
-let currentPet = null;
+let currentPet = null;     // The Current Pet Object
 let isAdminUser = false;
 
 function getQueryParam(name) {
@@ -16,10 +16,35 @@ function setText(elId, value) {
 }
 
 function getTextFromDD(ddEl) {
-    return (ddEl?.textContent || "").trim();
+    /*
+    * This function returns the innertext from any given <dd> element
+    */
+
+    // Check if the element exists
+    if(!ddEl){
+        return ""
+    }
+
+    // Get text Content 
+    let text = ddEl.textContent;
+
+    // If no text, return empty string
+    if(!text){
+        return ""
+    }
+
+    // removes whte spaces if any and return
+    return text.trim();
 }
 
 function buildSelect(id, items, selectedValue, placeholder) {
+    /*
+    * Create select drop down with a list of specified items
+    * id - allows to set custom IDs
+    * items - a list of items to choose in drop down
+    * selectedValue - ID of the item that should be pre-selected in the dropdown
+    * placeholder - a value to show when nothing is selected
+    */
     let html = `<select id="${id}" class="editSelect">`;
     html += `<option value="">${placeholder}</option>`;
     items.forEach(it => {
@@ -98,12 +123,16 @@ async function loadPetDetails() {
 async function startEditDetails() {
     if (!isAdminUser || !currentPet) return;
 
-    // Hide Edit/Delete, show Save/Cancel
+    // Hide Edit and Delete
     document.getElementById("petEditBtn").style.display = "none";
     document.getElementById("petDeleteBtn").style.display = "none";
+
+    // Show Save and Cancel
     document.getElementById("petEditControls").style.display = "flex";
 
     // Convert fields into inputs/selects
+
+    // Getting current ELEMENTS for pet's name, species, breed, gender, dob, status, desc
     const nameEl = document.getElementById("petName");
     const speciesEl = document.getElementById("petSpecies");
     const breedEl = document.getElementById("petBreed");
@@ -112,19 +141,23 @@ async function startEditDetails() {
     const statusEl = document.getElementById("petStatus");
     const descEl = document.getElementById("petDesc");
 
+    // Getting species and statuses in the background
     const [speciesRows, statusRows] = await Promise.all([
         fetch("/api/species", { credentials: "same-origin" }).then(r => r.json()),
         fetch("/api/adoption-status", { credentials: "same-origin" }).then(r => r.json())
     ]);
 
+    // Getting TEXT VALUES from the ELEMENTS
     const currentSpeciesName = getTextFromDD(speciesEl);
     const currentBreedName = getTextFromDD(breedEl);
     const currentStatusName = getTextFromDD(statusEl);
     const currentGender = getTextFromDD(genderEl).toLowerCase();
 
+    // Instead of getting innter text, we go through each one in the list (of species objects) and check just to get the right species object
     const selectedSpecies = speciesRows.find(s => s.name.toLowerCase() === currentSpeciesName.toLowerCase());
-    const selectedSpeciesId = selectedSpecies ? selectedSpecies.id : "";
+    const selectedSpeciesId = selectedSpecies ? selectedSpecies.id : ""; // and extract the id attribute
 
+    // Getting the list of associated breeds for the selected species
     let breedRows = [];
     if (selectedSpeciesId) {
         breedRows = await fetch("/api/breeds?speciesId=" + encodeURIComponent(selectedSpeciesId),
@@ -155,6 +188,10 @@ async function startEditDetails() {
     dobEl.innerHTML = `
         <input type="date" id="d-edit-dob" class="editSelect" value="${dobValue}">
     `;
+
+    // prevent future dates
+    const dobInput = document.getElementById("d-edit-dob");
+    dobInput.max = new Date().toISOString().split("T")[0];
 
     descEl.innerHTML = `<textarea id="d-edit-desc" class="editTextarea">${currentPet.temperament || ""}</textarea>`;
 
@@ -192,6 +229,13 @@ async function saveDetails() {
 
     if (!name || !dateOfBirth || !breedId || !gender || !adoptionStatusId) {
         alert("Please fill in Name, DOB, Species/Breed, Gender, and Status.");
+        return;
+    }
+
+    // Check date of birth
+    const today = new Date().toISOString().split("T")[0];
+    if (dateOfBirth > today) {
+        alert("Date of birth cannot be in the future.");
         return;
     }
 
