@@ -9,8 +9,7 @@
             <!-- Navigation Bar -->
             <div class="navBar">
                 <div id="homeTab" class="tab active" onclick="openTab('home')"> Home </div>
-                <div id="adoptTab" class="tab" onclick="openTab('about')"> About </div>
-                <div id="aboutTab" class="tab" onclick="openTab('login')"> Login or Register </div>
+                <div id="aboutTab" class="tab" onclick="openTab('login')"> Login </div>
             </div>
             <!-- Dialog for Loggin In -->
             <dialog id="loginDialog" class="authDialog">
@@ -25,12 +24,10 @@
 
                 <form id="loginForm" onsubmit="event.preventDefault(); loginUser();">
                     <!-- Email -->
-                    <input type="text" id="loginUsername" name="username" class="authInput" placeholder="Username" required>
-                    <br>
+                    <input type="text" id="loginUsername" name="username" class="authInput" placeholder="Username" required><br>
 
                     <!-- Password -->
-                    <input type="password" id="loginPassword" name="password" class="authInput" placeholder="Password" required>
-                    <br>
+                    <input type="password" id="loginPassword" name="password" class="authInput" placeholder="Password" required><br>
 
                     <!-- Submit -->
                     <button type="submit">Login</button>
@@ -52,8 +49,21 @@
                     <h2>Create Account</h2>
                 </div>
                 <form id="registerForm" onsubmit="event.preventDefault(); registerUser();">
+
                     <!-- users.name -->
                     <input type="text" id="regUsername" name="username" placeholder="Username" class="authInput" required>
+                    <input type="text" id="regFirstName" name="firstName" placeholder="First name" class="authInput" required>
+                    <input type="text" id="regLastName" name="lastName" placeholder="Last name" class="authInput" required>
+
+                    <!-- Contact Number -->
+                    <input type="text" id="regContactNo" name="contactNo" placeholder="Contact number" class="authInput" required>
+
+                    <!-- Upload profile image (like pets) -->
+                    <label for="regProfileImage" class="addImageLabel">Upload Profile Image</label>
+                    <input type="file" id="regProfileImage" name="profileImage" accept="image/*" required>
+
+                    <!-- Preview -->
+                    <img id="regPreviewImg" style="display:none; width:120px; height:120px; object-fit:cover; border-radius:50%; margin:10px auto;">
 
                     <!-- users.type (FK to userTypes.id) -->
                     <select id="regType" name="type" class="authInput" required>
@@ -102,24 +112,24 @@
                 <div class="instructions">
                     <div>
                         <div class="stepCard">
-                            <span>Step 1 : Browse our adoption gallery</span>
+                            <span>Step 1 : Login or create account</span>
                         </div>
                         <div class="stepCard">
-                            <span>Step 2 : Book an appointment</span>
+                            <span>Step 2 : Browse our adoption gallery</span>
                         </div>
                         <div class="stepCard">
-                            <span>Step 3 : Show up for your appointment on time</span>
+                            <span>Step 3 : Book an appointment</span>
                         </div>
                     </div>
                     <div>
                         <div class="stepCard">
-                            <span>Step 4 : Meet the animal and our care team</span>
+                            <span>Step 3 : Show up for your appointment on time</span>
                         </div>
                         <div class="stepCard">
-                            <span>Step 5 : Complete the adoption process</span>
+                            <span>Step 5 : Meet the animal and our care team</span>
                         </div>
                         <div class="stepCard">
-                            <span>Step 6 : Take your new companion home and begin your journey together</span>
+                            <span>Step 6 : Complete the adoption process</span>
                         </div>
                     </div>
                 </div>

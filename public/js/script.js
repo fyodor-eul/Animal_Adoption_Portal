@@ -161,8 +161,7 @@ function openTab(name){
     /* Highlight the current tab */
     if(name === "home"){
         document.getElementById("homeTab").classList.add('active');
-    }else if(name == "adopt"){
-        document.getElementById("adoptTab").classList.add('active');
+        window.location.href = "/";
     }else if(name == "login"){
         console.log("login");
         showLoginDialog();
@@ -171,7 +170,6 @@ function openTab(name){
         console.log("error");
     }
 }
-
 
 /* Make the dialog close by clicking the background  */
 function enableDialogBackgroundClose(dialogId) {
@@ -244,3 +242,57 @@ function todayYMD() {
     const dd = String(d.getDate()).padStart(2, "0");
     return `${yyyy}-${mm}-${dd}`;
 }
+
+function registerUser() {
+    const form = document.getElementById("registerForm");
+    if (!form) return;
+
+    const password = document.getElementById("regPassword")?.value || "";
+    const confirmPassword = document.getElementById("regConfirmPassword")?.value || "";
+    if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        document.getElementById("regConfirmPassword")?.focus();
+        return;
+    }
+
+    // Build multipart form (includes file input automatically)
+    const formData = new FormData(form);
+
+    fetch("/register", {
+        method: "POST",
+        credentials: "same-origin",
+        body: formData
+    })
+    .then(async (res) => {
+        const txt = await res.text();
+        if (!res.ok) throw new Error(txt || "Registration failed");
+        return txt;
+    })
+    .then(() => {
+        alert("Account created! Please login.");
+        removeRegisterDialog();
+        showLoginDialog();
+    })
+    .catch((err) => {
+        console.error(err);
+        alert(err.message);
+    });
+}
+
+/* Image Preview on Registration Form */
+document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("regProfileImage");
+    const preview = document.getElementById("regPreviewImg");
+    if (!input || !preview) return;
+
+    input.addEventListener("change", (event) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+        } else {
+            preview.src = "";
+            preview.style.display = "none";
+        }
+    });
+});

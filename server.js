@@ -25,13 +25,21 @@ const connection = mysql.createConnection(options); // or mysql.createPool(optio
 
 const sessionStore = new MySQLStore({}/* session store options */, db);
 
-
-/* File Storage */
+/* File storage for pet images */
 const mul_storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "public/images/profiles/pets"),
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname)
 });
 const upload = multer({ storage: mul_storage });
+
+/* File storage for user images */
+const user_storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "public/images/profiles/users"),
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  }
+});
+const userUpload = multer({ storage: user_storage });
 
 
 /* Middleware Stacks in Order */
@@ -50,11 +58,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
-
-
-
-
 /* User Authentication and Sessions */
 
 app.use(session({
@@ -62,7 +65,7 @@ app.use(session({
     resave: false,              // disable saving to the database everytime (update only when the data has been modified)
     secret: 'secretkey',
     saveUninitialized: false,   // disable saving the cookies in the client's browser before we set any cookie values
-    cookie: { maxAge: 300000 }  // Cookie age : 5mins
+    cookie: { maxAge: 600000 }  // Cookie age : 10mins
 }));
 
 app.post('/login', (req, res) => {
@@ -109,39 +112,46 @@ app.post('/login', (req, res) => {
 });
 
 /* Register */
-app.post('/register', function(req, res) {
-    const username = req.body.username;
-    const password = req.body.password;
-    const type = req.body.type; // number (1 = admin, 2 = user)
+app.post("/register", userUpload.single("profileImage"), (req, res) => {
+    const username = (req.body.username || "").trim();
+    const password = req.body.password || "";
+    const type = Number(req.body.type);
+    
+    const firstName = (req.body.firstName || "").trim();
+    const lastName = (req.body.lastName || "").trim();
+    const contactNo = (req.body.contactNo || "").trim();
 
-    if (!username || !password || !type) {
-        return res.status(400).send("Missing required fields");
+    if (!req.file) {
+      return res.status(400).send("Profile image is required.");
     }
 
-    // 1. Check duplicate username
-    var checkSql = "SELECT * FROM users WHERE name = ?";
-    db.query(checkSql, [username], function(err, rows) {
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Database error");
-        }
+    if (!username || !password || !type || !firstName || !lastName || !contactNo) {
+      return res.status(400).send("Missing required fields");
+    }
 
-        if (rows.length > 0) {
-            return res.status(409).send("Username already exists");
-        }
+    const profileImageUrl = `images/profiles/users/${req.file.filename}`;
 
-        // 2. Insert user
-        var insertSql = "INSERT INTO users (name, password, type, createdAt) VALUES (?, ?, ?, NOW())";
-        db.query(insertSql, [username, password, type], function(err2, result) {
-            if (err2) {
-                console.error(err2);
-                return res.status(500).send("Failed to create account");
+    // Duplicate username check
+    db.query("SELECT 1 FROM users WHERE name = ? LIMIT 1", [username], (err, rows) => {
+        if (err) return res.status(500).send("Database error");
+        if (rows.length) return res.status(409).send("Username already exists");
+
+        const insertSql = `INSERT INTO users (name, password, createdAt, type, firstName, lastName, profileImage, contactNo) VALUES (?, ?, CURDATE(), ?, ?, ?, ?, ?)`;
+
+        db.query(
+            insertSql,
+            [username, password, type, firstName, lastName, profileImageUrl, contactNo],
+            (err2) => {
+                if (err2) {
+                    console.error(err2);
+                    return res.status(500).send("Failed to create account");
+                }
+                return res.status(201).send("Registration successful");
             }
-
-            res.send("Registration successful");
-        });
+        );
     });
 });
+
 
 /* Create Pet */
 app.post('/gallery', upload.single("profileImg"), function(req, res){
@@ -524,8 +534,6 @@ app.delete("/api/adoption-status/:id", requireAdmin, function(req, res) {
         }
     );
 });
-
-
 
 app.listen(1338, "0.0.0.0");
 console.log("[+] Web server is running @ http://127.0.0.1:1338");

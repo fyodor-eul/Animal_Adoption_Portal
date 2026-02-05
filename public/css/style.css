@@ -249,3 +249,20 @@ footer div h2, ul {
     color: cornflowerblue;
     cursor: pointer;
 }
+
+/* Register User Image Upload */
+.addImageLabel {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #005bbb;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#regProfileImage {
+    display: none;
+}
