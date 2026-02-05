@@ -1,1 +1,74 @@
-This page will show the detailed information about the selected animal.
+<!DOCTYPE html>
+<html>
+    <head>
+      <title>Pet Details</title>
+      <link rel="stylesheet" type="text/css" href="./css/style.css">
+      <link rel="stylesheet" type="text/css" href="./css/gallery.css">
+      <link rel="stylesheet" type="text/css" href="./css/pet_details.css">
+    </head>
+
+    <body onload="loadPetDetails()">
+        <header>
+            <div class="navBar">
+                <div class="tab" onclick="window.location.href='index.html'"> Home </div>
+                <div class="tab active" onclick="window.location.href='gallery.html'"> Gallery </div>
+                <div class="tab" onclick="window.location.href='about.html'"> About </div>
+                <div class="tab" onclick="logoutUser()"> Logout </div>
+            </div>
+        </header>
+
+        <div class="petPage">
+            <button class="backBtn" onclick="window.location.href='gallery.html'">← Back to Gallery</button>
+            <div id="petHero" class="petHero">
+                <!-- For Image -->
+            </div>
+            
+            <div class="petPanel">
+                <div class="petHeader">
+                    <h1 id="petName">Loading…</h1>
+                    <span id="petStatus" class="petStatus">-</span>
+                </div>
+                
+                <div class="petGrid">
+                    <div class="petField">
+                        <div class="petLabel">Species</div>
+                        <div class="petValue" id="petSpecies">-</div>
+                    </div>
+                    <div class="petField">
+                        <div class="petLabel">Breed</div>
+                        <div class="petValue" id="petBreed">-</div>
+                    </div>
+                    
+                    <div class="petField">
+                        <div class="petLabel">Gender</div>
+                        <div class="petValue" id="petGender">-</div>
+                    </div>
+                    
+                    <div class="petField">
+                        <div class="petLabel">DOB</div>
+                        <div class="petValue" id="petDob">-</div>
+                    </div>
+                </div>
+                
+                <div class="petSection">
+                    <h2>Description</h2>
+                    <p id="petDesc" class="petDesc"></p>
+                </div>
+
+                <!-- Edit Buttons -->
+                <div id="petAdminBar" class="petAdminBar" style="display:none;">
+                    <button id="petEditBtn" class="editPetBtn" type="button" onclick="startEditDetails()">Edit</button>
+                    <button id="petDeleteBtn" class="deletePetBtn" type="button" onclick="deletePetFromDetails()">Delete</button>
+
+                    <div id="petEditControls" class="editControls" style="display:none;">
+                        <button class="savePetBtn" type="button" onclick="saveDetails()">Save</button>
+                        <button class="cancelEditBtn" type="button" onclick="cancelEditDetails()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script src="js/script.js"></script>
+        <script src="js/pet_details.js"></script>
+    </body>
+</html>

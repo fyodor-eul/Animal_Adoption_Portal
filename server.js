@@ -298,15 +298,19 @@ app.delete("/gallery/:id", function(req, res) {
 /* Update Pet */
 app.put("/gallery/:id", requireAdmin, function(req, res) {
     const id = req.params.id;
-    const { name, breedId, gender, adoptionStatusId, temperament } = req.body;
+    const { name, dateOfBirth, breedId, gender, adoptionStatusId, temperament } = req.body;
+
+    if (!name || !dateOfBirth || !breedId || !gender || !adoptionStatusId) {
+        return res.status(400).send("Missing required fields");
+    }
 
     const sql = `
         UPDATE animaladoption.animals
-        SET name = ?, breed_id = ?, gender = ?, adoptionStatus_id = ?, temperament = ?
+        SET name = ?, dateOfBirth = ?, breed_id = ?, gender = ?, adoptionStatus_id = ?, temperament = ?
         WHERE id = ?
     `;
 
-    db.query(sql, [name, breedId, gender, adoptionStatusId, temperament, id], function(err, result) {
+    db.query(sql, [name, dateOfBirth, breedId, gender, adoptionStatusId, temperament, id], function(err, result) {
         if (err) {
             console.error(err);
             return res.status(500).send("Update failed");
