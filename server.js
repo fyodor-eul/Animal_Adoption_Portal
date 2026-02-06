@@ -8,7 +8,6 @@ const MySQLStore = require('express-mysql-session')(session);
 /* For File Uploading */
 var multer = require("multer");
 var path = require("path");
-const { flushCompileCache } = require("module");
 
 var app = express();
 
@@ -68,6 +67,7 @@ app.use(session({
     cookie: { maxAge: 600000 }  // Cookie age : 10mins
 }));
 
+/* Login */
 app.post('/login', (req, res) => {
     const { username, password } = req.body || {};
     if(!username || !password){
@@ -152,6 +152,46 @@ app.post("/register", userUpload.single("profileImage"), (req, res) => {
     });
 });
 
+/* Check if a user is logged in */
+app.get("/me", function(req, res) {
+    /*
+    * end point for checking if a user is logged in or not
+    */
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).json({ authenticated: false });
+    }
+
+    return res.json({
+        authenticated: true,
+        user: {
+            username: req.session.user.username,
+            type: req.session.user.type
+        }
+    });
+});
+
+/* Log out */
+app.post("/logout", function(req, res) {
+    req.session.destroy(err => {
+        if (err) return res.status(500).send("Logout failed");
+        res.clearCookie("connect.sid");
+        res.send("Logged out");
+    });
+});
+
+function requireAdmin(req, res, next) {
+    /*
+    * A middleware that bocks if the user does not have admin access
+    */
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).send("Unauthorized");
+    }
+    const type = String(req.session.user.type || "").toLowerCase();
+    if (type !== "admin") {
+        return res.status(403).send("Forbidden: admin only");
+    }
+    next();
+}
 
 /* Create Pet */
 app.post('/gallery', upload.single("profileImg"), function(req, res){
@@ -256,22 +296,6 @@ app.route('/gallery').get(function(req, res){
     })
 });
 
-app.get("/me", function(req, res) {
-    /*
-    * end point for checking if a user is logged in or not
-    */
-    if (!req.session.authenticated || !req.session.user) {
-        return res.status(401).json({ authenticated: false });
-    }
-
-    return res.json({
-        authenticated: true,
-        user: {
-            username: req.session.user.username,
-            type: req.session.user.type
-        }
-    });
-});
 
 app.delete("/gallery/:id", function(req, res) {
     // Must be logged in
@@ -437,27 +461,6 @@ app.delete("/api/breeds/:id", requireAdmin, function(req, res) {
     );
 });
 
-/* Log out */
-app.post("/logout", function(req, res) {
-    req.session.destroy(err => {
-        if (err) return res.status(500).send("Logout failed");
-        res.clearCookie("connect.sid");
-        res.send("Logged out");
-    });
-});
-
-
-function requireAdmin(req, res, next) {
-    if (!req.session.authenticated || !req.session.user) {
-        return res.status(401).send("Unauthorized");
-    }
-    const type = String(req.session.user.type || "").toLowerCase();
-    if (type !== "admin") {
-        return res.status(403).send("Forbidden: admin only");
-    }
-    next();
-}
-
 /* Create species */
 app.post("/api/species", requireAdmin, function(req, res) {
     const name = (req.body.name || "").trim();
@@ -563,71 +566,6 @@ app.get("/api/users/me", (req, res) => {
         if (err) return res.status(500).send("Database error");
         if (!rows || rows.length === 0) return res.status(404).send("User not found");
         return res.json(rows[0]);
-    });
-});
-
-// PUT update current user's details
-app.put("/api/users/me", userUpload.single("profileImage"), (req, res) => {
-    if (!req.session.user || !req.session.user.id) {
-        return res.status(401).send("Not logged in");
-    }
-
-    const userId = req.session.user.id;
-    const firstName = (req.body.firstName || "").trim();
-    const lastName = (req.body.lastName || "").trim();
-    const username = (req.body.username || "").trim();
-    const contactNo = (req.body.contactNo || "").trim();
-    const userType = req.body.userType; // This will be the type ID
-
-    // Simple validation
-    if (!firstName || !lastName || !username) {
-        return res.status(400).send("First name, last name, and username are required");
-    }
-
-    var sql = "UPDATE users SET firstName = ?, lastName = ?, name = ?, contactNo = ?, type = ? WHERE id = ?";
-    var params = [firstName, lastName, username, contactNo, Number(userType), userId];
-
-    // If profile image is uploaded, update that too
-    if (req.file) {
-        const profileImageUrl = "images/profiles/users/" + req.file.filename;
-        sql = "UPDATE users SET firstName = ?, lastName = ?, name = ?, contactNo = ?, type = ?, profileImage = ? WHERE id = ?";
-        params = [firstName, lastName, username, contactNo, Number(userType), profileImageUrl, userId];
-    }
-
-    db.query(sql, params, function(err, result) {
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Update failed");
-        }
-
-        // Fetch updated user data to return
-        const selectSql = `
-            SELECT 
-                u.id,
-                u.name AS username,
-                u.firstName,
-                u.lastName,
-                u.profileImage,
-                u.contactNo,
-                u.createdAt,
-                ut.id AS typeId,
-                ut.name AS typeName
-            FROM users u 
-            JOIN userTypes ut ON u.type = ut.id 
-            WHERE u.id = ? LIMIT 1
-        `;
-
-        db.query(selectSql, [userId], function(err2, rows) {
-            if (err2) return res.status(500).send(err2.message);
-            if (!rows || rows.length === 0) return res.status(404).send("User not found");
-            
-            // Update session data
-            req.session.user.username = rows[0].username;
-            req.session.user.type = rows[0].typeName;
-            req.session.user.typeId = rows[0].typeId;
-
-            res.json(rows[0]);
-        });
     });
 });
 
