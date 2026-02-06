@@ -11,11 +11,24 @@
             <div class="navBar">
                 <div id="homeTab" class="tab" onclick="openTab('home')"> Home </div>
                 <div id="adoptTab" class="tab active" onclick="openTab('adopt')"> Gallery </div>
-                <div id="logoutTab" class="tab" onclick="logoutUser()"> Logout </div>
+                <div id="logoutTab" class="tab" onclick="showUserDetails()"> User </div>
             </div>
-
-            <!-- Search bar and Filter -->
         </header>
+
+        <!-- User Details -->
+        <dialog id="userDetailsDialog" class="authDialog">
+            <div class="windowBar">
+                <button class="cancelButton" onclick="closeUserDetails()">❌</button>
+            </div>
+        
+            <div class="banner">
+                <h2>User Details</h2>
+            </div>
+        
+            <div id="userDetailsContent" style="padding: 15px; font-size: 17px;">
+                Loading...
+            </div>
+        </dialog>
 
         <h1>Our Lovely Residents</h1>
         <!-- Action Bar (only for admins)-->
@@ -196,6 +209,8 @@
         </div>
 
         <script src="js/script.js"></script>
-        <script src="js/gallery.js"></script>
+        <script src="js/navigation_bar/user_details.js"></script>
+        <script src="js/navigation_bar/navbar.js"></script>
+        <script src="js/gallery/gallery.js"></script>
     </body>
 </html>

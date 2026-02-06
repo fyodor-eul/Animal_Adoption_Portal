@@ -1,21 +1,4 @@
-function logoutUser() {
-    fetch("/logout", {
-        method: "POST",
-        credentials: "same-origin"
-    })
-    .then(res => {
-        if (!res.ok) return res.text().then(t => { throw new Error(t); });
-        return res.text();
-    })
-    .then(msg => {
-        console.log(msg);
-        window.location.href = "/";  // redirect to the home page
-    })
-    .catch(err => {
-        console.error("Logout error:", err);
-        alert("Failed to logout.");
-    });
-}
+
 
 function closeAllDialogs() {
     const dialogs = document.getElementsByTagName("dialog");
@@ -23,151 +6,6 @@ function closeAllDialogs() {
         if (dialogs[i].open) {
             dialogs[i].close();
         }
-    }
-}
-
-function showLoginDialog() {
-    closeAllDialogs();
-    document.getElementById('loginDialog').showModal();
-}
-
-function removeLoginDialog() {
-    document.getElementById('loginDialog').close();
-}
-
-function showRegisterDialog() {
-    closeAllDialogs();
-    document.getElementById('registerDialog').showModal();
-}
-
-function removeRegisterDialog() {
-    document.getElementById('registerDialog').close();
-}
-
-
-function loginUser() {
-    const usernameEl = document.getElementById("loginUsername");
-    const passwordEl = document.getElementById("loginPassword");
-
-    const username = usernameEl ? usernameEl.value.trim() : "";
-    const password = passwordEl ? passwordEl.value : "";
-
-    if (!username || !password) {
-        alert("Username and password are required.");
-        return;
-    }
-
-    fetch("/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin", // ensures session cookie is stored/sent
-        body: JSON.stringify({ username: username, password: password })
-    })
-    .then(res => {
-        if (!res.ok) {
-            return res.text().then(msg => { throw new Error(msg); });
-        }
-        return res.text();
-    })
-    .then(msg => {
-        console.log(msg); // "Successful Login" from server.js
-        removeLoginDialog();
-
-        // After login, the user can access /gallery without 401
-        window.location.href = "gallery.html";
-    })
-    .catch(err => {
-        console.error("Login error:", err);
-        alert(err.message || "Login failed. Please try again.");
-        location.href = "/";
-    });
-}
-
-function registerUser() {
-    const usernameEl = document.getElementById("regUsername");
-    const typeEl = document.getElementById("regType");
-    const passEl = document.getElementById("regPassword");
-    const confirmEl = document.getElementById("regConfirmPassword");
-
-    const username = usernameEl ? usernameEl.value.trim() : "";
-    const type = typeEl ? typeEl.value : ""; // string "1"/"2"
-    const password = passEl ? passEl.value : "";
-    const confirmPassword = confirmEl ? confirmEl.value : "";
-
-    if (!username || !type || !password || !confirmPassword) {
-        alert("Please fill in all fields.");
-        return;
-    }
-
-    if (password !== confirmPassword) {
-        alert("Passwords do not match!");
-        confirmEl.focus();
-        return;
-    }
-
-    fetch("/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        body: JSON.stringify({
-            username: username,           // backend can map this to users.name
-            password: password,
-            type: Number(type)            // send as number
-        })
-    })
-    .then(res => {
-        if (!res.ok) {
-            return res.text().then(msg => { throw new Error(msg); });
-        }
-        return res.text();
-    })
-    .then(msg => {
-        console.log(msg);
-        alert("Account created! Please login.");
-        removeRegisterDialog();
-        showLoginDialog();
-    })
-    .catch(err => {
-        console.error("Register error:", err);
-        alert(err.message || "Register failed.");
-    });
-}
-
-function checkPasswords() {
-    const passEl = document.getElementById("regPassword");
-    const confirmEl = document.getElementById("regConfirmPassword");
-
-    if (passEl.value && confirmEl.value && passEl.value !== confirmEl.value) {
-        confirmEl.style.borderColor = "red";
-    } else {
-        confirmEl.style.borderColor = "";
-    }
-}
-
-function openTab(name){
-    /*
-    This funciton handle what happens if we click on each tab
-    including style changes and calling functions
-    */
-
-    /* Log */
-    console.log(name);
-
-    /* Remove all active highlights on tabs */
-    var tabs = document.getElementsByClassName('tab');
-    for(i = 0; i < tabs.length; i++){
-        tabs[i].classList.remove('active');
-    }
-    /* Highlight the current tab */
-    if(name === "home"){
-        document.getElementById("homeTab").classList.add('active');
-        window.location.href = "/";
-    }else if(name == "login"){
-        console.log("login");
-        showLoginDialog();
-        //document.getElementById("aboutTab").classList.add('active');
-    }else{
-        console.log("error");
     }
 }
 
@@ -198,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
     enableDialogBackgroundClose("speciesDialog");
     enableDialogBackgroundClose("statusDialog");
     enableDialogBackgroundClose("breedDialog");
+    enableDialogBackgroundClose("userDetailsDialog");
 });
 
 function getAge(dobString) {
@@ -243,56 +82,6 @@ function todayYMD() {
     return `${yyyy}-${mm}-${dd}`;
 }
 
-function registerUser() {
-    const form = document.getElementById("registerForm");
-    if (!form) return;
 
-    const password = document.getElementById("regPassword")?.value || "";
-    const confirmPassword = document.getElementById("regConfirmPassword")?.value || "";
-    if (password !== confirmPassword) {
-        alert("Passwords do not match!");
-        document.getElementById("regConfirmPassword")?.focus();
-        return;
-    }
 
-    // Build multipart form (includes file input automatically)
-    const formData = new FormData(form);
 
-    fetch("/register", {
-        method: "POST",
-        credentials: "same-origin",
-        body: formData
-    })
-    .then(async (res) => {
-        const txt = await res.text();
-        if (!res.ok) throw new Error(txt || "Registration failed");
-        return txt;
-    })
-    .then(() => {
-        alert("Account created! Please login.");
-        removeRegisterDialog();
-        showLoginDialog();
-    })
-    .catch((err) => {
-        console.error(err);
-        alert(err.message);
-    });
-}
-
-/* Image Preview on Registration Form */
-document.addEventListener("DOMContentLoaded", () => {
-    const input = document.getElementById("regProfileImage");
-    const preview = document.getElementById("regPreviewImg");
-    if (!input || !preview) return;
-
-    input.addEventListener("change", (event) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            preview.src = URL.createObjectURL(file);
-            preview.style.display = "block";
-        } else {
-            preview.src = "";
-            preview.style.display = "none";
-        }
-    });
-});

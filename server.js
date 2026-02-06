@@ -535,5 +535,237 @@ app.delete("/api/adoption-status/:id", requireAdmin, function(req, res) {
     );
 });
 
+/* Getting the user's details */
+app.get("/api/users/me", (req, res) => {
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).send("Not logged in");
+    }
+
+    const userId = req.session.user.id;
+
+    const sql = `
+        SELECT 
+            u.id,
+            u.name AS username,
+            u.firstName,
+            u.lastName,
+            u.profileImage,
+            u.contactNo,
+            u.createdAt,
+            ut.name AS userType
+        FROM users u
+        JOIN userTypes ut ON u.type = ut.id
+        WHERE u.id = ?
+        LIMIT 1
+    `;
+
+    db.query(sql, [userId], (err, rows) => {
+        if (err) return res.status(500).send("Database error");
+        if (!rows || rows.length === 0) return res.status(404).send("User not found");
+        return res.json(rows[0]);
+    });
+});
+
+// PUT update current user's details
+app.put("/api/users/me", userUpload.single("profileImage"), (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+        return res.status(401).send("Not logged in");
+    }
+
+    const userId = req.session.user.id;
+    const firstName = (req.body.firstName || "").trim();
+    const lastName = (req.body.lastName || "").trim();
+    const username = (req.body.username || "").trim();
+    const contactNo = (req.body.contactNo || "").trim();
+    const userType = req.body.userType; // This will be the type ID
+
+    // Simple validation
+    if (!firstName || !lastName || !username) {
+        return res.status(400).send("First name, last name, and username are required");
+    }
+
+    var sql = "UPDATE users SET firstName = ?, lastName = ?, name = ?, contactNo = ?, type = ? WHERE id = ?";
+    var params = [firstName, lastName, username, contactNo, Number(userType), userId];
+
+    // If profile image is uploaded, update that too
+    if (req.file) {
+        const profileImageUrl = "images/profiles/users/" + req.file.filename;
+        sql = "UPDATE users SET firstName = ?, lastName = ?, name = ?, contactNo = ?, type = ?, profileImage = ? WHERE id = ?";
+        params = [firstName, lastName, username, contactNo, Number(userType), profileImageUrl, userId];
+    }
+
+    db.query(sql, params, function(err, result) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Update failed");
+        }
+
+        // Fetch updated user data to return
+        const selectSql = `
+            SELECT 
+                u.id,
+                u.name AS username,
+                u.firstName,
+                u.lastName,
+                u.profileImage,
+                u.contactNo,
+                u.createdAt,
+                ut.id AS typeId,
+                ut.name AS typeName
+            FROM users u 
+            JOIN userTypes ut ON u.type = ut.id 
+            WHERE u.id = ? LIMIT 1
+        `;
+
+        db.query(selectSql, [userId], function(err2, rows) {
+            if (err2) return res.status(500).send(err2.message);
+            if (!rows || rows.length === 0) return res.status(404).send("User not found");
+            
+            // Update session data
+            req.session.user.username = rows[0].username;
+            req.session.user.type = rows[0].typeName;
+            req.session.user.typeId = rows[0].typeId;
+
+            res.json(rows[0]);
+        });
+    });
+});
+
+// PUT update current user's details
+app.put("/api/users/me", userUpload.single("profileImage"), function(req, res) {
+    if (!req.session.user || !req.session.user.id) {
+        return res.status(401).send("Not logged in");
+    }
+
+    var userId = req.session.user.id;
+    var firstName = (req.body.firstName || "").trim();
+    var lastName = (req.body.lastName || "").trim();
+    var username = (req.body.username || "").trim();
+    var contactNo = (req.body.contactNo || "").trim();
+    var userType = req.body.userType; // This is the type ID from the dropdown
+
+    // Simple validation
+    if (!firstName || !lastName || !username) {
+        return res.status(400).send("First name, last name, and username are required");
+    }
+
+    if (!userType) {
+        return res.status(400).send("User type is required");
+    }
+
+    var sql = "UPDATE users SET firstName = ?, lastName = ?, name = ?, contactNo = ?, type = ? WHERE id = ?";
+    var params = [firstName, lastName, username, contactNo, Number(userType), userId];
+
+    // If profile image is uploaded, update that too
+    if (req.file) {
+        var profileImageUrl = "images/profiles/users/" + req.file.filename;
+        sql = "UPDATE users SET firstName = ?, lastName = ?, name = ?, contactNo = ?, type = ?, profileImage = ? WHERE id = ?";
+        params = [firstName, lastName, username, contactNo, Number(userType), profileImageUrl, userId];
+    }
+
+    db.query(sql, params, function(err, result) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Update failed");
+        }
+
+        // Fetch updated user data to return
+        var selectSql = `
+            SELECT 
+                u.id,
+                u.name AS username,
+                u.firstName,
+                u.lastName,
+                u.profileImage,
+                u.contactNo,
+                u.createdAt,
+                ut.id AS typeId,
+                ut.name AS typeName
+            FROM users u 
+            JOIN userTypes ut ON u.type = ut.id 
+            WHERE u.id = ? LIMIT 1
+        `;
+
+        db.query(selectSql, [userId], function(err2, rows) {
+            if (err2) return res.status(500).send(err2.message);
+            if (!rows || rows.length === 0) return res.status(404).send("User not found");
+            
+            // Update session data
+            req.session.user.username = rows[0].username;
+            req.session.user.type = rows[0].typeName;
+            req.session.user.typeId = rows[0].typeId;
+
+            res.json(rows[0]);
+        });
+    });
+});
+
+// GET user types
+app.get("/api/user-types", function(req, res) {
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).send("Unauthorized");
+    }
+
+    db.query("SELECT id, name FROM userTypes ORDER BY id", function(err, rows) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Database error");
+        }
+        res.json(rows);
+    });
+});
+
+// DELETE current user's account
+app.delete("/api/users/me", (req, res) => {
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).send("Not logged in");
+    }
+
+    const userId = req.session.user.id;
+
+    // 1) Delete animals added by this user first (avoid FK constraint errors)
+    db.query(
+        "DELETE FROM animaladoption.animals WHERE addedBy = ?",
+        [userId],
+        (err1) => {
+            if (err1) {
+                console.error(err1);
+                return res.status(500).send("Failed to delete user's pets");
+            }
+
+            // 2) Delete the user
+            db.query(
+                "DELETE FROM animaladoption.users WHERE id = ?",
+                [userId],
+                (err2, result) => {
+                    if (err2) {
+                        console.error(err2);
+
+                        // Common case: FK constraints from other tables you haven't handled
+                        return res
+                            .status(400)
+                            .send("Cannot delete account (it may be referenced by other records).");
+                    }
+
+                    if (!result || result.affectedRows === 0) {
+                        return res.status(404).send("User not found");
+                    }
+
+                    // 3) Destroy session + clear cookie
+                    req.session.destroy((err3) => {
+                        if (err3) {
+                            console.error(err3);
+                            // user already deleted; still return OK
+                        }
+                        res.clearCookie("connect.sid");
+                        return res.status(200).send("Deleted");
+                    });
+                }
+            );
+        }
+    );
+});
+
+
 app.listen(1338, "0.0.0.0");
 console.log("[+] Web server is running @ http://127.0.0.1:1338");
