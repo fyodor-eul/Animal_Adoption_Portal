@@ -3,14 +3,16 @@
     <head>
         <title>Home</title>
         <link rel="stylesheet" type="text/css" href="./css/style.css">
+        <link rel="stylesheet" type="text/css" href="./css/gallery.css">
     </head>
-    <body>
+    <body onload="renderNavBar()">
         <header>
             <!-- Navigation Bar -->
-            <div class="navBar">
+            <div class="navBar" id="navBar"></div>
+            <!--div class="navBar">
                 <div id="homeTab" class="tab active" onclick="openTab('home')"> Home </div>
                 <div id="aboutTab" class="tab" onclick="openTab('login')"> Login </div>
-            </div>
+            </div-->
             <!-- Dialog for Loggin In -->
             <dialog id="loginDialog" class="authDialog">
                 <div class="windowBar">
@@ -40,7 +42,6 @@
             </dialog>
 
             <!-- Dialog for Registering New Users -->
-
             <dialog id="registerDialog" class="authDialog">
                 <div class="windowBar">
                     <button class="cancelButton" onclick="removeRegisterDialog()">❌</button>
@@ -84,6 +85,21 @@
             </dialog>
 
         </header>
+
+         <!-- User Details -->
+        <dialog id="userDetailsDialog" class="authDialog">
+            <div class="windowBar">
+                <button class="cancelButton" onclick="closeUserDetails()">❌</button>
+            </div>
+        
+            <div class="banner">
+                <h2>User Details</h2>
+            </div>
+        
+            <div id="userDetailsContent" style="padding: 15px; font-size: 17px;">
+                Loading...
+            </div>
+        </dialog>
         
         <div class="main">
             <div class="banner">
@@ -154,5 +170,6 @@
 
         <script src="js/script.js"></script>
         <script src="js/navigation_bar/navbar.js"></script>
+        <script src="js/navigation_bar/user_details.js"></script>
     </body>
 </html>

@@ -1,30 +1,4 @@
 
-function openTab(name){
-    /*
-    This funciton handle what happens if we click on each tab
-    including style changes and calling functions
-    */
-
-    /* Log */
-    console.log(name);
-
-    /* Remove all active highlights on tabs */
-    var tabs = document.getElementsByClassName('tab');
-    for(i = 0; i < tabs.length; i++){
-        tabs[i].classList.remove('active');
-    }
-    /* Highlight the current tab */
-    if(name === "home"){
-        document.getElementById("homeTab").classList.add('active');
-        window.location.href = "/";
-    }else if(name == "login"){
-        console.log("login");
-        showLoginDialog();
-        //document.getElementById("aboutTab").classList.add('active');
-    }else{
-        console.log("error");
-    }
-}
 
 function showLoginDialog() {
     closeAllDialogs();
@@ -164,4 +138,62 @@ function logoutUser() {
         console.error("Logout error:", err);
         alert("Failed to logout.");
     });
+}
+
+/* Navigation Bar */
+function renderNavBar() {
+    const nav = document.getElementById("navBar");
+    if (!nav) return;
+
+    fetch("/me", {
+        method: "GET",
+        credentials: "same-origin"
+    }).then((res) => {
+        nav.innerHTML = `<div id="homeTab" class="tab" onclick="goHome()">Home</div>`;
+        if (res.status === 401) {
+            // Logged out
+            alert("Logged Out");
+            nav.innerHTML += `<div id="loginTab" class="tab" onclick="showLoginDialog()">Login</div>`;
+            setActiveTab();
+            return;
+        }else{
+            // Logged in
+            nav.innerHTML += `
+                <div id="galleryTab" class="tab" onclick="goGallery()">Gallery</div>
+                <div id="userTab" class="tab" onclick="showUserDetails()">User</div>
+            `;
+            setActiveTab();
+        }
+    }).catch((err) => {
+            console.error("Navbar render failed:", err);
+            nav.innerHTML = `
+                <div id="homeTab" class="tab" onclick="goHome()">Home</div>
+                <div id="loginTab" class="tab" onclick="showLoginDialog()">Login</div>
+            `;
+            setActiveTab();
+        });
+}
+
+function setActiveTab() {
+    const path = (window.location.pathname || "").toLowerCase();
+
+    if (path.includes("gallery")) {
+        document.getElementById("galleryTab")?.classList.add("active");
+        return;
+    }
+
+    if (path.includes("user")) {
+        document.getElementById("userTab")?.classList.add("active");
+        return;
+    }
+
+    document.getElementById("homeTab")?.classList.add("active");
+}
+
+function goHome() {
+    window.location.href = "/";
+}
+
+function goGallery() {
+    window.location.href = "/gallery.html";
 }

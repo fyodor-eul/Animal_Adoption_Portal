@@ -4,15 +4,16 @@
         <link rel="stylesheet" type="text/css" href="./css/style.css">
         <link rel="stylesheet" type="text/css" href="./css/gallery.css">
     </head>
-    <body onload="fetchAnimalData()">
+    <body onload="renderNavBar(); fetchAnimalData();">
 
         <header>
             <!-- Navigation Bar -->
-            <div class="navBar">
+            <div class="navBar" id="navBar"></div> 
+            <!--div class="navBar">
                 <div id="homeTab" class="tab" onclick="openTab('home')"> Home </div>
                 <div id="adoptTab" class="tab active" onclick="openTab('adopt')"> Gallery </div>
                 <div id="logoutTab" class="tab" onclick="showUserDetails()"> User </div>
-            </div>
+            </div-->
         </header>
 
         <!-- User Details -->
@@ -188,7 +189,6 @@
                 <button class="submitForm" type="submit">Add Status</button>
             </form>
         </dialog>
-
 
         <div id="galleryCarousel" class="gallery">
             <!--
