@@ -517,6 +517,33 @@ app.delete("/api/adoption-status/:id", requireAdmin, function(req, res) {
     );
 });
 
+// Update Pet Image 
+app.put("/gallery/:id/image", requireAdmin, upload.single("profileImg"), function (req, res) {
+    const id = req.params.id;
+
+    // Must have uploaded image
+    if (!req.file) {
+        return res.status(400).send("Profile image is required");
+    }
+
+    const imgUrl = `images/profiles/pets/${req.file.filename}`;
+
+    db.query(
+        "UPDATE animaladoption.animals SET profileImg = ? WHERE id = ?",
+        [imgUrl, id],
+        function (err, result) {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("Failed to update image");
+            }
+            if (!result || result.affectedRows === 0) {
+                return res.status(404).send("Animal not found");
+            }
+            return res.json({ profileImg: imgUrl });
+        }
+    );
+});
+
 /* Managing User Details Dialog */
 // Getting the user's details
 app.get("/api/users/me", (req, res) => {

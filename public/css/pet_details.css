@@ -35,6 +35,41 @@
   display: block;
 }
 
+.petHero { position: relative; }
+
+.petHeroWrap { position: relative; }
+
+.petHeroEdit{
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.heroUploadBtn{
+  border: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.90);
+  font-weight: 700;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+.heroUploadBtn:hover{
+  background: rgba(220, 240, 255, 0.95);
+}
+
+.heroHint{
+  font-size: 12px;
+  background: rgba(0,0,0,0.45);
+  color: white;
+  padding: 6px 8px;
+  border-radius: 10px;
+}
+
 /* Panel Under the Image */
 .petPanel{
   margin-top: 16px;

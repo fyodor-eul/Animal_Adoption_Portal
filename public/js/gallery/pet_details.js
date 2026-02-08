@@ -213,10 +213,68 @@ async function startEditDetails() {
         newBreeds.forEach(b => (html += `<option value="${b.id}">${b.name}</option>`));
         breedSelect.innerHTML = html;
     };
+
+    // Image Upload
+    const hero = document.getElementById("petHero");
+    if (hero) {
+        hero.innerHTML = `
+            <div class="petHeroWrap">
+                <img id="petHeroImg" src="${currentPet.profileImg}" alt="${currentPet.name}">
+                <div class="petHeroEdit">
+                    <label class="heroUploadBtn" for="d-edit-img">Change Image</label>
+                    <input id="d-edit-img" type="file" accept="image/*" style="display:none;">
+                    <div id="d-edit-img-hint" class="heroHint">PNG/JPG recommended</div>
+                </div>
+            </div>
+        `;
+
+        const fileInput = document.getElementById("d-edit-img");
+        const imgEl = document.getElementById("petHeroImg");
+
+        fileInput.addEventListener("change", () => {
+            const f = fileInput.files && fileInput.files[0];
+            if (!f) return;
+
+            if (!String(f.type || "").startsWith("image/")) {
+                alert("Please choose an image file.");
+                fileInput.value = "";
+                return;
+            }
+
+            // preview
+            imgEl.src = URL.createObjectURL(f);
+        });
+    }
+
 }
 
 async function saveDetails() {
     if (!isAdminUser || !currentPet) return;
+
+    // If admin selected a new image, upload it first
+    const imgInput = document.getElementById("d-edit-img");
+    const imgFile = imgInput && imgInput.files ? imgInput.files[0] : null;
+
+    if (imgFile) {
+        const fd = new FormData();
+        fd.append("profileImg", imgFile);
+
+        const upRes = await fetch(`/gallery/${currentPet.id}/image`, {
+            method: "PUT",
+            credentials: "same-origin",
+            body: fd
+        });
+
+        if (!upRes.ok) {
+            const t = await upRes.text();
+            alert(t || "Image upload failed");
+            return;
+        }
+
+        const upJson = await upRes.json();
+        // update local object so reload renders correctly
+        currentPet.profileImg = upJson.profileImg;
+    }
 
     const name = document.getElementById("d-edit-name")?.value.trim();
     const breedId = Number(document.getElementById("d-edit-breed")?.value);
