@@ -1,6 +1,6 @@
 /* User Details Dialog */
 dialog.authDialog{
-    /* Makes the dialog appear on the right side of the page */
+    /* maing sure the dialog appear on the right side of the page */
     margin: 0;
     top: 50px;
     left: 79%;
@@ -8,6 +8,7 @@ dialog.authDialog{
 }
 
 .userDetailsDialog{
+    /* Display */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -19,13 +20,13 @@ dialog.authDialog{
     margin: 0px;
 }
 
+/* Profile Image */
 .userDetailsDialog img{
     width:100px;
     height:100px;
-    /*object-fit:cover;*/
     border-radius:50%;
+
     display:block;
-    /*margin:10px auto;*/
 }
 
 .userDetailsDialog .persona{
@@ -34,6 +35,7 @@ dialog.authDialog{
 }
 
 .userDetailsDialog .persona div{
+    /* Display */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -42,11 +44,23 @@ dialog.authDialog{
     margin-left: 5px;
 }
 
+.uploadUserProfileBtn{
+    background-color: cornflowerblue;
+    padding: 2px;
+    border-radius: 5px;
+    font-size: 15px;
+    cursor:pointer;
+
+    margin-top: 10px;
+}
+
+/* User's full name and username */
 .userDetailsDialog .persona div h2
 ,.userDetailsDialog .persona div span{
     margin: 0px;
 }
 
+/* Contact Number and Type */
 .personaDetails{
     display: flex;
     flex-direction: column;
@@ -55,6 +69,11 @@ dialog.authDialog{
     width: 100%;
 }
 
+.personalDetailRows dt {
+    width: 70px;
+}
+
+/* Change Password */
 .changePassword{
     display: flex;
     flex-direction: column;
@@ -68,6 +87,7 @@ dialog.authDialog{
     margin: 0px;
 }
 
+/* Inputs for editing names, contact and type*/
 .userDetailsDialog input{
     width: 100%;
     border: 0px;
@@ -75,6 +95,7 @@ dialog.authDialog{
     padding: 10px;
 }
 
+/* Edit Save Cancel Buttons */
 .personalDetailBtns{
     display:flex;
     flex-direction: column;
@@ -93,6 +114,17 @@ dialog.authDialog{
     display: none;
 }
 
+/* Update Password Button */
+.updatePasswordBtn{
+    align-self: start;
+    border: 0px;
+    border-radius: 5px;
+    background-color: rgba(116, 158, 67, 0.815);
+    color: rgb(247, 243, 218);
+    padding: 10px;
+}
+
+/* Delete Account, Logout Buttons */
 .userDetailsRedBtns{
     display: flex;
     justify-content: end;
@@ -110,25 +142,4 @@ dialog.authDialog{
     padding: 10px;
 }
 
-.updatePasswordBtn{
-    align-self: start;
-    border: 0px;
-    border-radius: 5px;
-    background-color: rgba(116, 158, 67, 0.815);
-    color: rgb(247, 243, 218);
-    padding: 10px;
-}
 
-.personalDetailRows dt {
-    width: 70px;
-}
-
-.uploadUserProfileBtn{
-    background-color: cornflowerblue;
-    padding: 2px;
-    border-radius: 5px;
-    font-size: 15px;
-    cursor:pointer;
-
-    margin-top: 10px;
-}

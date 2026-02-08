@@ -27,7 +27,6 @@ h1{
     gap: 20px;
 
     list-style-type: none;    /* to remove the dots */
-    /*width: max-content;       /* Makes the gallery shrink to content width */
 }
 
 
@@ -114,7 +113,7 @@ h1{
 .viewPetBtn{
     font-family: Arial, Helvetica, sans-serif;
     width: 100%;          /* span across the card */
-    margin: auto;        /* moves the button to centre */
+    margin: auto;         /* moves the button to centre */
 
     border: 0;
     padding: 12px;
@@ -263,15 +262,15 @@ h1{
     color: rgba(80, 80, 80, 0.7);
 }
 
+/* Temperament Description */
 .petDesc{
-    /* Temperament Description */
     margin: 12px 0 0 0;
     font-size: 14px;
     line-height: 1.35;
     color: rgba(75, 75, 75, 0.8);
 }
 
-/* Status badge for example <span class="petStatus status-available">Available</span> */
+/* Status badge */
 .petStatus{
     display: inline-block;
     font-size: 12px;
@@ -443,7 +442,7 @@ dialog .submitForm {
 #speciesList.speciesList,
 #breedList.breedList,
 #statusList.statusList{
-    display: block;      /* override dialog div { display:flex } */
+    display: block;
 }
 
 .speciesList, .breedList, .statusList{

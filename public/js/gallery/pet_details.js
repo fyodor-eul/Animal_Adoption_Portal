@@ -11,8 +11,7 @@ function getText(elId) {
 }
 
 function setText(elId, value) {
-    const el = document.getElementById(elId);
-    if (el) el.textContent = value ?? "-";
+    document.getElementById(elId).textContent = value;
 }
 
 function getTextFromDD(ddEl) {
@@ -96,8 +95,7 @@ async function loadPetDetails() {
         return;
     }
 
-    // Render your existing UI fields (adjust IDs to match your pet.html)
-    // Example IDs: petName, petSpecies, petBreed, petGender, petStatus, petDesc, petHeroImg
+    // Render existing UI fields
     setText("petName", currentPet.name);
     setText("petSpecies", currentPet.speciesName || "-");
     setText("petBreed", currentPet.breedName || "-");

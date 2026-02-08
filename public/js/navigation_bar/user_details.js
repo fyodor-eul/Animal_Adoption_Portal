@@ -75,6 +75,11 @@ function parseFullName(fullName) {
 }
 
 function updateParticulars() {
+    /*
+    * This function allows users to key in to update their details
+    * the function is trigged with edit button is clicked
+    * the information is actually updated when saved saveParticulars() is called
+    */
     var persona = document.getElementById("persona");
     var personaDetails = document.getElementById("personaDetails");
 
@@ -84,7 +89,7 @@ function updateParticulars() {
     // Add profile image upload input
     var imageRow = document.getElementById("profileImagePreview");
     imageRow.innerHTML += `
-        <label for="profileImgInput" class="uploadUserProfileBtn">Edit</label>
+        <label id="labelProfileImgInput" for="profileImgInput" class="uploadUserProfileBtn">Edit</label>
         <input type="file" id="profileImgInput" style="display: none" accept="image/*">
     `;
     persona.insertBefore(imageRow, persona.firstChild);
@@ -98,7 +103,7 @@ function updateParticulars() {
     var contactValue = personaDetailsFields[0].children[1].textContent.trim();
     var typeValue = personaDetailsFields[1].children[1].textContent.trim();
 
-    // Store in persona container for later retrieval
+    // Store in persona for later retrieval
     persona.dataset.originalFullName = fullNameValue;
     persona.dataset.originalUsername = usernameValue;
     persona.dataset.originalContact = contactValue;
@@ -129,7 +134,7 @@ function updateParticulars() {
         <dd><input type="text" id="edit-contact" class="editInput" value="${contactValue}"></dd>
     `;
 
-    // Fetch user types from backend or use hardcoded values
+    // Fetch user types from backend
     fetch("/api/user-types", { credentials: "same-origin" })
         .then(function(res) {
             if (!res.ok) throw new Error("Failed to load user types");
@@ -176,12 +181,19 @@ function updateParticulars() {
 }
 
 function cancelUpdateParticulars() {
+    /*
+    * Cancel the editing process
+    */
     const persona = document.getElementById("persona");
     const personaDetails = document.getElementById("personaDetails");
 
     // Remove the image file input back
+    const fileInputLabel = document.getElementById("labelProfileImgInput");
     const fileInput = document.getElementById("profileImgInput");
     if (fileInput) fileInput.remove();
+    if (fileInputLabel) fileInputLabel.remove();
+
+
     
     // Retrieve stored original values
     const fullNameValue = persona.dataset.originalFullName || "";
@@ -362,7 +374,6 @@ function deleteUser() {
         })
         .then(() => {
             alert("Account deleted.");
-            // Redirect to landing / login page (adjust if needed)
             location.href = "/";
         })
         .catch((err) => {

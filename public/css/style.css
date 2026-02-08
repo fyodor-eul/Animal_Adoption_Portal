@@ -11,7 +11,7 @@ body{
 header{
     width: 90%;
 
-    position: fixed; /* This makes the header apper on top of image instead of taking its own space */
+    position: fixed; /* Header apper on top of image instead of taking its own space */
     top: 5px;
     left: 5%;
     z-index: 99; /* To apper at the top most layer anyway */

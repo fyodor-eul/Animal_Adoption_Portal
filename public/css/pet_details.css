@@ -1,9 +1,12 @@
+/* For pet_details.html page */
+
 .petPage{
   width: 1100px;
   margin: 90px auto 40px auto;
   padding: 0 10px;
 }
 
+/* Button to go back to gallery */
 .backBtn{
   border: 0;
   padding: 10px 14px;
@@ -17,6 +20,7 @@
   background: rgba(184, 156, 108, 0.35);
 }
 
+/* Hero image for showing pet */
 .petHero{
   margin-top: 14px;
   border-radius: 16px;
@@ -31,6 +35,7 @@
   display: block;
 }
 
+/* Panel Under the Image */
 .petPanel{
   margin-top: 16px;
   background: rgb(255, 248, 238);
@@ -39,6 +44,7 @@
   box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
 
+/* Header inside the panel showing the pet's name and adoption status */
 .petHeader{
   display: flex;
   align-items: center;
@@ -51,6 +57,7 @@
   color: rgb(95, 95, 92);
 }
 
+/* Grid for showing pet's information */
 .petGrid{
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -78,6 +85,7 @@
   color: rgb(133, 93, 32);
 }
 
+/* Pet's Description */
 .petSection{
   margin-top: 16px;
 }
@@ -87,7 +95,7 @@
   color: rgb(95, 95, 92);
 }
 
-/* Override gallery card "hover-only" buttons for details page */
+/* Edit, Delete Buttons */
 .petAdminBar .editPetBtn,
 .petAdminBar .deletePetBtn {
   opacity: 1 !important;
@@ -98,7 +106,6 @@
   margin: 0 !important;
 }
 
-/* optional: make them align nicely */
 .petAdminBar {
   display: flex;
   justify-content: flex-end;

@@ -187,7 +187,6 @@ async function editPet(id) {
     const selectedStatusId = selectedStatus ? selectedStatus.id : "";
 
     // Swap to inputs and selects
-    //nameDD.innerHTML = `<input id="edit-name-${id}" value="${nameDD.textContent.trim()}">`;
     nameDD.innerHTML = `<input id="edit-name-${id}" class="editInput" value="${nameDD.textContent.trim()}">`;
 
     specDD.innerHTML =
@@ -214,7 +213,7 @@ async function editPet(id) {
         <textarea id="edit-desc-${id}" class="editTextarea">${descP.textContent.trim()}</textarea>
     `;
 
-    // dependency: when species changes, reload breeds
+    // When species changes, reload breeds
     const speciesSelect = document.getElementById(`edit-species-${id}`);
     const breedSelect = document.getElementById(`edit-breed-${id}`);
 

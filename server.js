@@ -10,17 +10,6 @@ var multer = require("multer");
 
 var app = express();
 
-/* DB Connection for MySQL with sessions (already created and imported as db)
-var db_con_opts = {
-    host: process.env.DB_HOST, //IP of the database server
-    port: process.env.DB_PORT, //port of the database server
-    user: process.env.DB_USER, //user of the database server
-    password: process.env.DB_PASSWORD, //password of the database server
-    database: process.env.DB_NAME //database name
-};
-const connection = mysql.createConnection(options); // or mysql.createPool(options);
-*/
-
 const sessionStore = new MySQLStore({}/* session store options */, db);
 
 /* File storage for pet images */
@@ -45,16 +34,6 @@ const userUpload = multer({ storage: user_storage });
 app.use(express.json());                        // For parsing JSON
 app.use(express.urlencoded({extended: false})); // For parseing HTML FORM data: from "username=fyodor&password=1234" to {"username": "fyodor", "password": 1234 }
 app.use(express.static("./public"));            // For hosting static files
-
-/* Logging */
-app.use((req, res, next) => {
-    //console.log(`[${req.method}] : ${req.url}`);
-    next();
-});
-app.use((req, res, next) => {
-    //process.stdout.write(`\t`);
-    next();
-});
 
 /* User Authentication and Sessions */
 

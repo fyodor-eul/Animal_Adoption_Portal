@@ -33,7 +33,7 @@ function loginUser() {
     fetch("/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "same-origin", // ensures session cookie is stored/sent
+        credentials: "same-origin",
         body: JSON.stringify({ username: username, password: password })
     })
     .then(res => {
@@ -43,7 +43,7 @@ function loginUser() {
         return res.text();
     })
     .then(msg => {
-        console.log(msg); // "Successful Login" from server.js
+        console.log(msg);
         removeLoginDialog();
 
         // After login, the user can access /gallery without 401
@@ -86,7 +86,7 @@ function registerUser() {
         return;
     }
 
-    // Build multipart form (includes file input automatically)
+    // Build multipart form data
     const formData = new FormData(form);
 
     fetch("/register", {
