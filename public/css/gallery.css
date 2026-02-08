@@ -10,41 +10,6 @@ h1{
     color: rgb(95, 95, 92);
 }
 
-.actionBar{
-    /* Display */
-    display: flex;
-    justify-self: center;
-    gap: 22px;
-
-    /* Box */
-    padding: 0px 50px;
-    margin: 12px;
-
-    /* Dimensions */
-    width: 1250px;
-    height: 40px;
-    
-    /* Style */
-    background-color: rgb(244, 229, 211, 0.90);
-    border-radius: 20px;
-
-    /* To make it stick at the top */
-    position: sticky;
-    top: 55px;
-    z-index: 50;
-}
-
-.actionBtn{
-    /**/
-    padding: 10px 2px;
-}
-
-.actionBtn:hover{
-    color: rgb(184, 156, 108);
-    border-bottom: 4px solid rgb(184, 156, 108);
-    cursor: pointer;
-}
-
 .gallery{
     display: flex;
     justify-self: center;
@@ -415,8 +380,6 @@ dialog .submitForm {
     width: 200px;
 }
 
-
-
 /* Add/Remove Breeds Dialog */
 .breedRow {
     display: flex;
@@ -475,9 +438,6 @@ dialog .submitForm {
     border-radius: 5px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
-/* List of Species, Breeds and Status*/
-
 
 /* Make the list container scrollable */
 #speciesList.speciesList,
@@ -538,129 +498,4 @@ dialog .submitForm {
 }
 .speciesList li:hover button, .breedList li:hover button, .statusList li:hover button{
     opacity: 1;
-}
-
-/* User Details Dialog */
-dialog.authDialog{
-    /* Makes the dialog appear on the right side of the page */
-    margin: 0;
-    top: 50px;
-    left: 79%;
-    transform: translateX(-50%);
-}
-
-.userDetailsDialog{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    width: 100%;
-}
-
-.authDialog .banner h2{
-    margin: 0px;
-}
-
-.userDetailsDialog img{
-    width:100px;
-    height:100px;
-    /*object-fit:cover;*/
-    border-radius:50%;
-    display:block;
-    /*margin:10px auto;*/
-}
-
-.userDetailsDialog .persona{
-    width: 100%;
-    display: flex;
-}
-
-.userDetailsDialog .persona div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    width: 100%;
-    margin-left: 5px;
-}
-
-.userDetailsDialog .persona div h2
-,.userDetailsDialog .persona div span{
-    margin: 0px;
-}
-
-.personaDetails{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    width: 100%;
-}
-
-.changePassword{
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    gap: 10px;
-
-    width: 100%;
-}
-
-.changePassword h3{
-    margin: 0px;
-}
-
-.userDetailsDialog input{
-    width: 100%;
-    border: 0px;
-    border-radius: 5px;
-    padding: 10px;
-}
-
-.personalDetailBtns{
-    display:flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-.updateParticularsBtn, .updateParticularsCancelBtn, .updateParticularsSaveBtn{
-    padding: 5px 10px;
-    border: 0px;
-    border-radius: 5px;
-
-    background-color: rgb(179, 179, 184);
-}
-
-.updateParticularsCancelBtn, .updateParticularsSaveBtn{
-    display: none;
-}
-
-.userDetailsRedBtns{
-    display: flex;
-    justify-content: end;
-    gap: 10px;
-
-    width: 100%;
-}
-
-.userDetailsRedBtns .deleteBtn,
-.userDetailsRedBtns .logoutBtn{
-    border: 0px;
-    border-radius: 5px;
-    background-color: rgb(235, 68, 68);
-    color: rgb(247, 243, 218);
-    padding: 10px;
-}
-
-.updatePasswordBtn{
-    align-self: start;
-    border: 0px;
-    border-radius: 5px;
-    background-color: rgba(116, 158, 67, 0.815);
-    color: rgb(247, 243, 218);
-    padding: 10px;
-}
-
-.personalDetailRows dt {
-    width: 70px;
 }

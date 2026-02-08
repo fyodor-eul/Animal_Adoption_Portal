@@ -100,7 +100,7 @@ function registerUser() {
         return txt;
     })
     .then(() => {
-        alert("Account created! Please login. NAVBAR");
+        alert("Account created! Please login.");
         removeRegisterDialog();
         showLoginDialog();
     })
@@ -152,7 +152,6 @@ function renderNavBar() {
         nav.innerHTML = `<div id="homeTab" class="tab" onclick="goHome()">Home</div>`;
         if (res.status === 401) {
             // Logged out
-            alert("Logged Out");
             nav.innerHTML += `<div id="loginTab" class="tab" onclick="showLoginDialog()">Login</div>`;
             setActiveTab();
             return;

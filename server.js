@@ -7,7 +7,6 @@ const MySQLStore = require('express-mysql-session')(session);
 
 /* For File Uploading */
 var multer = require("multer");
-var path = require("path");
 
 var app = express();
 
@@ -131,11 +130,13 @@ app.post("/register", userUpload.single("profileImage"), (req, res) => {
 
     const profileImageUrl = `images/profiles/users/${req.file.filename}`;
 
-    // Duplicate username check
+    // Duplicate username check before creating a new user
     db.query("SELECT 1 FROM users WHERE name = ? LIMIT 1", [username], (err, rows) => {
         if (err) return res.status(500).send("Database error");
+        // If the user already exists, return the function with status code 409 duplicate
         if (rows.length) return res.status(409).send("Username already exists");
 
+        // If there is no preexisting user, create one
         const insertSql = `INSERT INTO users (name, password, createdAt, type, firstName, lastName, profileImage, contactNo) VALUES (?, ?, CURDATE(), ?, ?, ?, ?, ?)`;
 
         db.query(
@@ -174,7 +175,7 @@ app.get("/me", function(req, res) {
 app.post("/logout", function(req, res) {
     req.session.destroy(err => {
         if (err) return res.status(500).send("Logout failed");
-        res.clearCookie("connect.sid");
+        res.clearCookie("connect.sid");   // remove the cookie on the client's browser named "connect.sid"
         res.send("Logged out");
     });
 });
@@ -193,58 +194,7 @@ function requireAdmin(req, res, next) {
     next();
 }
 
-/* Create Pet */
-app.post('/gallery', upload.single("profileImg"), function(req, res){
-
-    // Must be logged in
-    if (!req.session.authenticated || !req.session.user) {
-        return res.status(401).send("Unauthorized");
-    }
-
-    // Must have uploaded image
-    if (!req.file) {
-        return res.status(400).send("Profile image is required");
-    }
-
-    // Check if the image file is submitted
-    if (!req.file) {
-        return res.status(400).send("Profile image upload failed or missing.");
-    }
-
-    const imgUrl = `images/profiles/pets/${req.file.filename}`;
-
-    const sql = `
-        INSERT INTO animaladoption.animals
-        (name, profileImg, dateOfBirth, breed_id, gender, temperament, adoptionStatus_id, addedBy)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    var parameter = [
-        req.body.name,
-        imgUrl,
-        req.body.dateOfBirth,
-        req.body.breed,
-        req.body.gender,
-        req.body.temperament,
-        req.body.adoptionStatus,
-        req.session.user.id
-    ];
-
-    db.query(sql, parameter, function(error, result){
-        if(error) throw error;
-
-        db.query(
-            "SELECT * FROM animaladoption.animals WHERE id = ?",
-            [result.insertId],
-            function(err2, rows){
-                if(err2) throw err2;
-                res.json(rows[0]);
-            }
-        );
-    });
-});
-
-
+/* Loading Gallery Contents */
 app.route('/gallery').get(function(req, res){
     /* Selecting from animals table joining with breeds, species and adoptionStatus to map the IDs with name. (excluding IDs themselves to be shown)*/
     var sql = `
@@ -296,7 +246,78 @@ app.route('/gallery').get(function(req, res){
     })
 });
 
+/* Manaing Pets */
+// Create Pet
+app.post('/gallery', requireAdmin, upload.single("profileImg"), function(req, res){
 
+    // Must have uploaded image
+    if (!req.file) {
+        return res.status(400).send("Profile image is required");
+    }
+
+    // Check if the image file is submitted
+    if (!req.file) {
+        return res.status(400).send("Profile image upload failed or missing.");
+    }
+
+    const imgUrl = `images/profiles/pets/${req.file.filename}`;
+
+    const sql = `
+        INSERT INTO animaladoption.animals
+        (name, profileImg, dateOfBirth, breed_id, gender, temperament, adoptionStatus_id, addedBy)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    var parameter = [
+        req.body.name,
+        imgUrl,
+        req.body.dateOfBirth,
+        req.body.breed,
+        req.body.gender,
+        req.body.temperament,
+        req.body.adoptionStatus,
+        req.session.user.id
+    ];
+
+    db.query(sql, parameter, function(error, result){
+        if(error) throw error;
+
+        db.query(
+            "SELECT * FROM animaladoption.animals WHERE id = ?",
+            [result.insertId],
+            function(err2, rows){
+                if(err2) throw err2;
+                res.json(rows[0]);
+            }
+        );
+    });
+});
+
+// Update Pet
+app.put("/gallery/:id", requireAdmin, function(req, res) {
+    const id = req.params.id;
+    const { name, dateOfBirth, breedId, gender, adoptionStatusId, temperament } = req.body;
+
+    if (!name || !dateOfBirth || !breedId || !gender || !adoptionStatusId) {
+        return res.status(400).send("Missing required fields");
+    }
+
+    const sql = `
+        UPDATE animaladoption.animals
+        SET name = ?, dateOfBirth = ?, breed_id = ?, gender = ?, adoptionStatus_id = ?, temperament = ?
+        WHERE id = ?
+    `;
+
+    db.query(sql, [name, dateOfBirth, breedId, gender, adoptionStatusId, temperament, id], function(err, result) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Update failed");
+        }
+        res.send("Updated");
+    });
+});
+
+// Delete Pet
 app.delete("/gallery/:id", function(req, res) {
     // Must be logged in
     if (!req.session.authenticated || !req.session.user) {
@@ -329,31 +350,7 @@ app.delete("/gallery/:id", function(req, res) {
     });
 });
 
-/* Update Pet */
-app.put("/gallery/:id", requireAdmin, function(req, res) {
-    const id = req.params.id;
-    const { name, dateOfBirth, breedId, gender, adoptionStatusId, temperament } = req.body;
-
-    if (!name || !dateOfBirth || !breedId || !gender || !adoptionStatusId) {
-        return res.status(400).send("Missing required fields");
-    }
-
-    const sql = `
-        UPDATE animaladoption.animals
-        SET name = ?, dateOfBirth = ?, breed_id = ?, gender = ?, adoptionStatus_id = ?, temperament = ?
-        WHERE id = ?
-    `;
-
-    db.query(sql, [name, dateOfBirth, breedId, gender, adoptionStatusId, temperament, id], function(err, result) {
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Update failed");
-        }
-        res.send("Updated");
-    });
-});
-
-/* APT end points for dropdown */
+/* End points for loading dropdowns and lists */
 // Species list
 app.get("/api/species", function(req, res) {
     if (!req.session.authenticated || !req.session.user) {
@@ -366,6 +363,36 @@ app.get("/api/species", function(req, res) {
             return res.status(500).send("Database error");
         }
         //console.log(rows);
+        res.json(rows);
+    });
+});
+
+// Breed list
+app.get("/api/breeds", function(req, res) {
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).send("Unauthorized");
+    }
+
+    const speciesId = req.query.speciesId;
+
+    var sql = `
+        SELECT id, name
+        FROM animaladoption.breeds
+    `;
+    const params = [];
+
+    if (speciesId) {
+        sql += " WHERE species_id = ? ";
+        params.push(speciesId);
+    }
+
+    sql += " ORDER BY name";
+
+    db.query(sql, params, function(err, rows) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Database error");
+        }
         res.json(rows);
     });
 });
@@ -385,37 +412,48 @@ app.get("/api/adoption-status", function(req, res) {
     });
 });
 
-// Breed list
-app.get("/api/breeds", function(req, res) {
-    if (!req.session.authenticated || !req.session.user) {
-        return res.status(401).send("Unauthorized");
-    }
+/* Managing Species */
+// Create species
+app.post("/api/species", requireAdmin, function(req, res) {
+    const name = (req.body.name || "").trim();
+    if (!name) return res.status(400).send("Species name required");
 
-    const speciesId = req.query.speciesId;
-
-    var sql = `
-        SELECT b.id, b.name
-        FROM animaladoption.breeds b
-    `;
-    const params = [];
-
-    if (speciesId) {
-        sql += " WHERE b.species_id = ? ";
-        params.push(speciesId);
-    }
-
-    sql += " ORDER BY b.name";
-
-    db.query(sql, params, function(err, rows) {
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Database error");
+    db.query(
+        "INSERT INTO animaladoption.species (name) VALUES (?)",
+        [name],
+        function(err, result) {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("Database error");
+            }
+            res.json({ id: result.insertId, name: name });
         }
-        res.json(rows);
-    });
+    );
 });
 
-/* Create breed */
+// Delete species
+app.delete("/api/species/:id", requireAdmin, function(req, res) {
+    const id = req.params.id;
+
+    db.query(
+        "DELETE FROM animaladoption.species WHERE id = ?",
+        [id],
+        function(err, result) {
+            if (err) {
+                // If this species is referenced by breeds, MySQL may block delete (FK constraint)
+                console.error(err);
+                return res.status(400).send("Cannot delete species (it may be used by breeds)");
+            }
+            if (!result || result.affectedRows === 0) {
+                return res.status(404).send("Species not found");
+            }
+            res.send("Deleted");
+        }
+    );
+});
+
+/* Managing Breeds */
+// Create breed
 app.post("/api/breeds", requireAdmin, function(req, res) {
     const name = (req.body.name || "").trim();
     const speciesId = req.body.speciesId;
@@ -438,7 +476,7 @@ app.post("/api/breeds", requireAdmin, function(req, res) {
     );
 });
 
-/* Delete breed */
+// Delete breed
 app.delete("/api/breeds/:id", requireAdmin, function(req, res) {
     const id = req.params.id;
 
@@ -461,46 +499,8 @@ app.delete("/api/breeds/:id", requireAdmin, function(req, res) {
     );
 });
 
-/* Create species */
-app.post("/api/species", requireAdmin, function(req, res) {
-    const name = (req.body.name || "").trim();
-    if (!name) return res.status(400).send("Species name required");
-
-    db.query(
-        "INSERT INTO animaladoption.species (name) VALUES (?)",
-        [name],
-        function(err, result) {
-            if (err) {
-                console.error(err);
-                return res.status(500).send("Database error");
-            }
-            res.json({ id: result.insertId, name: name });
-        }
-    );
-});
-
-/* Delete species */
-app.delete("/api/species/:id", requireAdmin, function(req, res) {
-    const id = req.params.id;
-
-    db.query(
-        "DELETE FROM animaladoption.species WHERE id = ?",
-        [id],
-        function(err, result) {
-            if (err) {
-                // If this species is referenced by breeds, MySQL may block delete (FK constraint)
-                console.error(err);
-                return res.status(400).send("Cannot delete species (it may be used by breeds)");
-            }
-            if (!result || result.affectedRows === 0) {
-                return res.status(404).send("Species not found");
-            }
-            res.send("Deleted");
-        }
-    );
-});
-
-/* Create status */
+/* Managing Status */
+// Create status
 app.post("/api/adoption-status", requireAdmin, function(req, res) {
     const name = (req.body.name || "").trim();
     if (!name) return res.status(400).send("Status name required");
@@ -518,7 +518,7 @@ app.post("/api/adoption-status", requireAdmin, function(req, res) {
     );
 });
 
-/* Delete status */
+// Delete status
 app.delete("/api/adoption-status/:id", requireAdmin, function(req, res) {
     const id = req.params.id;
 
@@ -538,7 +538,8 @@ app.delete("/api/adoption-status/:id", requireAdmin, function(req, res) {
     );
 });
 
-/* Getting the user's details */
+/* Managing User Details Dialog */
+// Getting the user's details
 app.get("/api/users/me", (req, res) => {
     if (!req.session.authenticated || !req.session.user) {
         return res.status(401).send("Not logged in");
@@ -569,7 +570,7 @@ app.get("/api/users/me", (req, res) => {
     });
 });
 
-// PUT update current user's details
+// Updating current user's details
 app.put("/api/users/me", userUpload.single("profileImage"), function(req, res) {
     if (!req.session.user || !req.session.user.id) {
         return res.status(401).send("Not logged in");
@@ -638,7 +639,7 @@ app.put("/api/users/me", userUpload.single("profileImage"), function(req, res) {
     });
 });
 
-// GET user types
+// Getting user types
 app.get("/api/user-types", function(req, res) {
     if (!req.session.authenticated || !req.session.user) {
         return res.status(401).send("Unauthorized");
@@ -653,7 +654,7 @@ app.get("/api/user-types", function(req, res) {
     });
 });
 
-// DELETE current user's account
+// Deleting current user's account
 app.delete("/api/users/me", (req, res) => {
     if (!req.session.authenticated || !req.session.user) {
         return res.status(401).send("Not logged in");
@@ -661,7 +662,7 @@ app.delete("/api/users/me", (req, res) => {
 
     const userId = req.session.user.id;
 
-    // 1) Delete animals added by this user first (avoid FK constraint errors)
+    // Delete animals added by this user first (avoid FK constraint errors)
     db.query(
         "DELETE FROM animaladoption.animals WHERE addedBy = ?",
         [userId],
@@ -671,7 +672,7 @@ app.delete("/api/users/me", (req, res) => {
                 return res.status(500).send("Failed to delete user's pets");
             }
 
-            // 2) Delete the user
+            // Delete the user
             db.query(
                 "DELETE FROM animaladoption.users WHERE id = ?",
                 [userId],
@@ -679,7 +680,6 @@ app.delete("/api/users/me", (req, res) => {
                     if (err2) {
                         console.error(err2);
 
-                        // Common case: FK constraints from other tables you haven't handled
                         return res
                             .status(400)
                             .send("Cannot delete account (it may be referenced by other records).");
@@ -689,11 +689,10 @@ app.delete("/api/users/me", (req, res) => {
                         return res.status(404).send("User not found");
                     }
 
-                    // 3) Destroy session + clear cookie
+                    // Destroy session + clear cookie
                     req.session.destroy((err3) => {
                         if (err3) {
                             console.error(err3);
-                            // user already deleted; still return OK
                         }
                         res.clearCookie("connect.sid");
                         return res.status(200).send("Deleted");
@@ -704,6 +703,54 @@ app.delete("/api/users/me", (req, res) => {
     );
 });
 
+// Update current user's password
+app.put("/api/users/me/password", function (req, res) {
+    // Must be logged in
+    if (!req.session.authenticated || !req.session.user) {
+        return res.status(401).send("Not logged in");
+    }
+
+    const userId = req.session.user.id;
+    const { currentPassword, newPassword } = req.body || {};
+
+    if (!currentPassword || !newPassword) {
+        return res.status(400).send("currentPassword and newPassword are required");
+    }
+
+    // Load user's existing password
+    db.query(
+        "SELECT password FROM users WHERE id = ? LIMIT 1",
+        [userId],
+        function (err, rows) {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("Database error");
+            }
+            if (!rows || rows.length === 0) {
+                return res.status(404).send("User not found");
+            }
+
+            const existingPassword = rows[0].password;
+
+            if (existingPassword !== currentPassword) {
+                return res.status(401).send("Current password is incorrect");
+            }
+
+            // Update password
+            db.query(
+                "UPDATE users SET password = ? WHERE id = ?",
+                [newPassword, userId],
+                function (err2) {
+                    if (err2) {
+                        console.error(err2);
+                        return res.status(500).send("Failed to update password");
+                    }
+                    return res.status(200).send("Password updated");
+                }
+            );
+        }
+    );
+});
 
 app.listen(1338, "0.0.0.0");
 console.log("[+] Web server is running @ http://127.0.0.1:1338");

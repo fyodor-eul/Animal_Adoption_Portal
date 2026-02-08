@@ -1,0 +1,34 @@
+.actionBar{
+    /* Display */
+    display: flex;
+    justify-self: center;
+    gap: 22px;
+
+    /* Box */
+    padding: 0px 50px;
+    margin: 12px;
+
+    /* Dimensions */
+    width: 1250px;
+    height: 40px;
+    
+    /* Style */
+    background-color: rgb(244, 229, 211, 0.90);
+    border-radius: 20px;
+
+    /* To make it stick at the top */
+    position: sticky;
+    top: 55px;
+    z-index: 50;
+}
+
+.actionBtn{
+    /**/
+    padding: 10px 2px;
+}
+
+.actionBtn:hover{
+    color: rgb(184, 156, 108);
+    border-bottom: 4px solid rgb(184, 156, 108);
+    cursor: pointer;
+}

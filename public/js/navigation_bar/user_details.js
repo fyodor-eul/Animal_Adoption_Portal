@@ -17,7 +17,10 @@ function showUserDetails() {
       document.getElementById("userDetailsContent").innerHTML = `
         <div class="userDetailsDialog">
             <div id="persona" class="persona">
-                <img src="/${user.profileImage}" style="">
+                <div id="profileImagePreview" style="width:100px;">
+                    <img src="/${user.profileImage}">
+                </div>
+
                 <div>
                     <div class="personalDetailRows"><h2 id="userFullName" data-value="${user.firstName} ${user.lastName}">${user.firstName} ${user.lastName}</h2></div>
                     <div class="personalDetailRows"><span id="userUsername">${user.username}</span></div>
@@ -77,6 +80,14 @@ function updateParticulars() {
 
     var personaFields = persona.getElementsByClassName("personalDetailRows");
     var personaDetailsFields = personaDetails.getElementsByClassName("personalDetailRows");
+
+    // Add profile image upload input
+    var imageRow = document.getElementById("profileImagePreview");
+    imageRow.innerHTML += `
+        <label for="profileImgInput" class="uploadUserProfileBtn">Edit</label>
+        <input type="file" id="profileImgInput" style="display: none" accept="image/*">
+    `;
+    persona.insertBefore(imageRow, persona.firstChild);
 
     // Retrieve and STORE original values from persona section
     var fullNameEl = document.getElementById("userFullName");
@@ -167,6 +178,10 @@ function updateParticulars() {
 function cancelUpdateParticulars() {
     const persona = document.getElementById("persona");
     const personaDetails = document.getElementById("personaDetails");
+
+    // Remove the image file input back
+    const fileInput = document.getElementById("profileImgInput");
+    if (fileInput) fileInput.remove();
     
     // Retrieve stored original values
     const fullNameValue = persona.dataset.originalFullName || "";
@@ -226,6 +241,11 @@ function saveParticulars() {
     formData.append("username", username);
     formData.append("contactNo", contactNo);
     formData.append("userType", userType);
+
+    const imageFile = document.getElementById("profileImgInput")?.files[0];
+    if (imageFile) {
+        formData.append("profileImage", imageFile);
+    }
 
     fetch("/api/users/me", {
         method: "PUT",

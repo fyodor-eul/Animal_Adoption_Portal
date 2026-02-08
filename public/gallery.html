@@ -3,17 +3,14 @@
         <title>Gallery</title>
         <link rel="stylesheet" type="text/css" href="./css/style.css">
         <link rel="stylesheet" type="text/css" href="./css/gallery.css">
+        <link rel="stylesheet" type="text/css" href="./css/action_bar.css">
+        <link rel="stylesheet" type="text/css" href="./css/navbar_userDetails.css">
     </head>
     <body onload="renderNavBar(); fetchAnimalData();">
 
         <header>
             <!-- Navigation Bar -->
             <div class="navBar" id="navBar"></div> 
-            <!--div class="navBar">
-                <div id="homeTab" class="tab" onclick="openTab('home')"> Home </div>
-                <div id="adoptTab" class="tab active" onclick="openTab('adopt')"> Gallery </div>
-                <div id="logoutTab" class="tab" onclick="showUserDetails()"> User </div>
-            </div-->
         </header>
 
         <!-- User Details -->
@@ -59,7 +56,7 @@
                     display: none;
                 ">
             </div>
-            <form id="addCardForm" method="post" enctype="multipart/form-data" onsubmit="event.preventDefault(); addAnimalData();">
+            <form id="addCardForm" method="post" onsubmit="event.preventDefault(); addAnimalData();">
                 <!-- Profile Image -->
                 <label for="profileImg" class="imageUpload">Upload Profile Image</label>
                 <input type="file" id="profileImg" name="profileImg" accept="image/*" required>

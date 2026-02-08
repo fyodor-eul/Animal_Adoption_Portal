@@ -4,15 +4,12 @@
         <title>Home</title>
         <link rel="stylesheet" type="text/css" href="./css/style.css">
         <link rel="stylesheet" type="text/css" href="./css/gallery.css">
+        <link rel="stylesheet" type="text/css" href="./css/navbar_userDetails.css">
     </head>
     <body onload="renderNavBar()">
         <header>
             <!-- Navigation Bar -->
             <div class="navBar" id="navBar"></div>
-            <!--div class="navBar">
-                <div id="homeTab" class="tab active" onclick="openTab('home')"> Home </div>
-                <div id="aboutTab" class="tab" onclick="openTab('login')"> Login </div>
-            </div-->
             <!-- Dialog for Loggin In -->
             <dialog id="loginDialog" class="authDialog">
                 <div class="windowBar">
@@ -59,14 +56,14 @@
                     <!-- Contact Number -->
                     <input type="text" id="regContactNo" name="contactNo" placeholder="Contact number" class="authInput" required>
 
-                    <!-- Upload profile image (like pets) -->
+                    <!-- Upload profile image -->
                     <label for="regProfileImage" class="addImageLabel">Upload Profile Image</label>
                     <input type="file" id="regProfileImage" name="profileImage" accept="image/*" required>
 
                     <!-- Preview -->
                     <img id="regPreviewImg" style="display:none; width:120px; height:120px; object-fit:cover; border-radius:50%; margin:10px auto;">
 
-                    <!-- users.type (FK to userTypes.id) -->
+                    <!-- users.type -->
                     <select id="regType" name="type" class="authInput" required>
                         <option value="">Select account type</option>
                         <option value="1">Admin</option>
@@ -101,6 +98,7 @@
             </div>
         </dialog>
         
+        <!-- Main Content -->
         <div class="main">
             <div class="banner">
                 <img src="images/cover.jpg">

@@ -5,16 +5,14 @@
       <link rel="stylesheet" type="text/css" href="./css/style.css">
       <link rel="stylesheet" type="text/css" href="./css/gallery.css">
       <link rel="stylesheet" type="text/css" href="./css/pet_details.css">
+      <link rel="stylesheet" type="text/css" href="./css/action_bar.css">
+      <link rel="stylesheet" type="text/css" href="./css/navbar_userDetails.css">
     </head>
 
-    <body onload="loadPetDetails()">
+    <body onload="renderNavBar(); loadPetDetails()">
         <header>
-            <div class="navBar">
-                <div class="tab" onclick="window.location.href='index.html'"> Home </div>
-                <div class="tab active" onclick="window.location.href='gallery.html'"> Gallery </div>
-                <div class="tab" onclick="window.location.href='about.html'"> About </div>
-                <div class="tab" onclick="logoutUser()"> Logout </div>
-            </div>
+            <!-- Navigation Bar -->
+            <div class="navBar" id="navBar"></div> 
         </header>
 
         <div class="petPage">
@@ -70,5 +68,7 @@
         
         <script src="js/script.js"></script>
         <script src="js/gallery/pet_details.js"></script>
+        <script src="js/navigation_bar/user_details.js"></script>
+        <script src="js/navigation_bar/navbar.js"></script>
     </body>
 </html>
